@@ -1,0 +1,23 @@
+SELECT DISTINCT ?vessel ?vesselLabel ?image ?loa ?mmsi ?capacity ?capacityMode ?operator ?operatorLabel ?operatorStartTime ?operatorEndTime
+WHERE
+{
+  ?vessel wdt:P31/wdt:P279* wd:Q25653; # instanceof ferry
+          wdt:P8047 wd:Q664. # with country of registry = NZ
+
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mi". }
+
+  OPTIONAL {?vessel wdt:P18 ?image .}
+  OPTIONAL {?vessel wdt:P2043 ?loa .}
+  ?vessel wdt:P587 ?mmsi . # required, otherwise the data is useless to us
+  OPTIONAL {
+    ?vessel p:P1083 ?capacityB .
+    ?capacityB ps:P1083 ?capacity .
+    ?capacityB pq:P518 ?capacityMode .
+  }
+  OPTIONAL {
+    ?vessel p:P137 ?operatorB .
+    ?operatorB ps:P137 ?operator .
+    OPTIONAL { ?operatorB pq:P580 ?operatorStartTime . }
+    OPTIONAL { ?operatorB pq:P582 ?operatorEndTime . }
+  }
+}
