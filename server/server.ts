@@ -1,7 +1,7 @@
 import express from "express";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { FERRY_TERMINALS } from "./constants.ts";
+import { FERRY_ROUTES, FERRY_TERMINALS } from "./constants.ts";
 import { fetchVesselInfo } from "./api/fetchVesselInfo.ts";
 import { fetchTimetables } from "./api/fetchTimetables.ts";
 import { fetchVesselsPositions } from "./api/fetchVesselsPositions.ts";
@@ -13,6 +13,10 @@ const app = express();
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 app.use(express.static(join(__dirname, "../dist")));
+
+app.get("/api/static", (_req, res) => {
+  res.send({ routes: FERRY_ROUTES, terminals: FERRY_TERMINALS });
+});
 
 app.get("/api/admin/update/vessel_info", async (req, res) => {
   try {

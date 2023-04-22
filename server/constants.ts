@@ -24,76 +24,72 @@ export const FERRY_TERMINALS = {
 } satisfies Record<number, FerryTerminal>;
 
 export const FERRY_ROUTES = {
-  DEV: {
-    name: "Devonport",
-    shortName: "Devo",
-    category: "inner",
-    stationIds: [96001, 96701],
+  inner: {
+    DEV: {
+      name: "Devonport",
+      shortName: "Devo",
+      stationIds: [96001, 96701],
+    },
+    BAYS: {
+      name: "Bayswater",
+      shortName: "Bayswtr",
+      stationIds: [96001, 96401],
+    },
+    BIRK: {
+      name: "Birkenhead/Northcote",
+      shortName: "Birk",
+      stationIds: [96001, 96601, 97301, 96401],
+    },
   },
-  BAYS: {
-    name: "Bayswater",
-    shortName: "Bayswtr",
-    category: "inner",
-    stationIds: [96001, 96401],
+  mid: {
+    HOBS: {
+      name: "Hobsonville/Beach Haven",
+      shortName: "Hobs",
+      stationIds: [96001, 21779, 41220],
+    },
+    HMB: {
+      name: "Half Moon Bay",
+      shortName: "HMB",
+      stationIds: [96001, 97001],
+    },
+    WSTH: {
+      name: "West Harbour",
+      shortName: "West Hbr",
+      stationIds: [96001, 98101],
+    },
   },
-  BIRK: {
-    name: "Birkenhead/Northcote",
-    shortName: "Birk",
-    category: "inner",
-    stationIds: [96001, 96601, 97301, 96401],
+  outer: {
+    PINE: {
+      name: "Pine Harbour",
+      shortName: "PineH",
+      stationIds: [96001, 97401],
+    },
+    GULF: {
+      name: "Gulf Harbour",
+      shortName: "Gulf Hbr",
+      stationIds: [96001, 96901],
+    },
   },
-  HOBS: {
-    name: "Hobsonville/Beach Haven",
-    shortName: "Hobs",
-    category: "mid",
-    stationIds: [96001, 21779, 41220],
-  },
-  HMB: {
-    name: "Half Moon Bay",
-    shortName: "HMB",
-    category: "mid",
-    stationIds: [96001, 97001],
-  },
-  WSTH: {
-    name: "West Harbour",
-    shortName: "West Hbr",
-    category: "mid",
-    stationIds: [96001, 98101],
+  gulf: {
+    RANG: {
+      name: "Rangitoto",
+      shortName: "Rangi",
+      stationIds: [96001, 61089],
+    },
+    RAK: {
+      name: "Rakino Island",
+      shortName: "Rakino",
+      stationIds: [96001, 97501, 97701],
+    },
+    MTIA: {
+      name: "Waiheke",
+      shortName: "Waiheke",
+      stationIds: [96001, 61000],
+    },
   },
 
-  PINE: {
-    name: "Pine Harbour",
-    shortName: "PineH",
-    category: "outer",
-    stationIds: [96001, 97401],
-  },
-  GULF: {
-    name: "Gulf Harbour",
-    shortName: "Gulf Hbr",
-    category: "outer",
-    stationIds: [96001, 96901],
-  },
-
-  RANG: {
-    name: "Rangitoto",
-    shortName: "Rangi",
-    category: "gulf",
-    stationIds: [96001, 61089],
-  },
-  RAK: {
-    name: "Rakino Island",
-    shortName: "Rakino",
-    category: "gulf",
-    stationIds: [96001, 97501, 97701],
-  },
-  MTIA: {
-    name: "Waiheke",
-    shortName: "Waiheke",
-    category: "gulf",
-    stationIds: [96001, 61000],
-  },
   // TODO: CORO
-} satisfies Record<string, FerryRoute>;
+} satisfies Record<string, Record<string, FerryRoute>>;
 
 export const API_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",

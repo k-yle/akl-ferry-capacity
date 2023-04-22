@@ -69,9 +69,12 @@ export async function fetchVesselInfo() {
 
     // maybe save operator
     if (row.operator && row.operatorLabel) {
+      let name = row.operatorLabel.value;
+      if (name === "Fullers Group") name = "Fullers360";
+
       const operator = {
         qId: getQId(row.operator.value),
-        name: row.operatorLabel.value,
+        name,
         start: row.operatorStartTime?.value,
         end: row.operatorEndTime?.value,
       };

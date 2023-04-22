@@ -41,7 +41,6 @@ export type FerryTerminal = [name: string, lat: number, lng: number];
 export type FerryRoute = {
   name: string;
   shortName: string;
-  category: "inner" | "mid" | "outer" | "gulf";
   stationIds: (keyof typeof FERRY_TERMINALS)[];
 };
 

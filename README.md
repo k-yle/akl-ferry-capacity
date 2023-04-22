@@ -2,7 +2,7 @@
 
 This app shows you which ferry is currently operating each route in Auckland, and how many passengers and bikes it can take.
 
-It's quite common that the smaller ferries leave people behind because of their limited capacity.
+It's quite common that the smaller ferries leave people behind because of their limited capacity. This App helps you judge whether to take the ferry or not.
 
 # How it works
 
