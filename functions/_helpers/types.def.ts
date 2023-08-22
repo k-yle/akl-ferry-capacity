@@ -30,12 +30,12 @@ export type VesselInfo = {
 };
 
 /** merged the interested details from agency.txt, routes.txt, and trips.txt */
-export type TripObj = {
+export type TripObject = {
   rsn: string;
   operator: string;
   destination: string;
 };
-export type TripObjFile = { [tripId: string]: TripObj };
+export type TripObjectFile = { [tripId: string]: TripObject };
 
 export type FerryTerminal = [name: string, lat: number, lng: number];
 export type FerryRoute = {
@@ -44,7 +44,7 @@ export type FerryRoute = {
   stationIds: (keyof typeof FERRY_TERMINALS)[];
 };
 
-export type Departure = TripObj & {
+export type Departure = TripObject & {
   tripId: string;
   destinationLive: string;
   time: string;

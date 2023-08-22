@@ -20,10 +20,7 @@ function timeSince(
  * TODO: make this reactive
  */
 export function getRelativeDate(date: Date): string {
-  if (
-    typeof Intl === "undefined" ||
-    typeof Intl.RelativeTimeFormat === "undefined"
-  ) {
+  if (typeof Intl === "undefined" || Intl.RelativeTimeFormat === undefined) {
     return `on ${date.toLocaleDateString(preferredLanguage)}`;
   }
   const [number, units] = timeSince(date);

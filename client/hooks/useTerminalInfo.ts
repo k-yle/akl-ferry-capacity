@@ -14,8 +14,8 @@ export function useTerminalInfo(
         await appFetch<TerminalLiveInfo>(`/api/terminals/${stationId}`)
       );
       setError(undefined);
-    } catch (ex: any) {
-      setError(ex);
+    } catch (ex) {
+      setError(ex instanceof Error ? ex : new Error(`${ex}`));
     }
   }, [stationId]);
 

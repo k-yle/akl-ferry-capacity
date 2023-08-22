@@ -57,11 +57,11 @@ export const onRequest: Handler = async (context) => {
     }
   `;
 
-  const req = await fetch(
+  const request = await fetch(
     `https://query.wikidata.org/sparql?query=${encodeURIComponent(query)}`,
     { headers: { ...API_HEADERS, Accept: "application/sparql-results+json" } }
   );
-  const apiResp: WikidataAPI = await req.json();
+  const apiResp: WikidataAPI = await request.json();
 
   const vesselInfo: VesselInfo = {};
 

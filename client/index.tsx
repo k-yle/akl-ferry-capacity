@@ -7,4 +7,4 @@ import "@fontsource/roboto/700.css";
 
 import { App } from "./App.tsx";
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.querySelector("#root")!).render(<App />);

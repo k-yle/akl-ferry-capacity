@@ -11,6 +11,7 @@ import type {
   FERRY_TERMINALS,
   VesselOnRoute,
 } from "../types.def.ts";
+import { repairError } from "../helpers/general.ts";
 
 type StaticInfo = {
   terminals: typeof FERRY_TERMINALS;
@@ -41,8 +42,8 @@ export const DataProvider: React.FC<React.PropsWithChildren> = ({
       setVessels(
         await appFetch<IDataContext["vessels"]>("/api/vessel_positions")
       );
-    } catch (ex: any) {
-      setError(ex);
+    } catch (ex) {
+      setError(repairError(ex));
     }
   }, []);
 
@@ -53,10 +54,12 @@ export const DataProvider: React.FC<React.PropsWithChildren> = ({
     return () => clearInterval(id);
   }, [updateVesselPositions]);
 
-  const ctx = useMemo(
+  const context = useMemo(
     () => ({ ...staticInfo, vessels, error }),
     [staticInfo, vessels, error]
   );
 
-  return <DataContext.Provider value={ctx}>{children}</DataContext.Provider>;
+  return (
+    <DataContext.Provider value={context}>{children}</DataContext.Provider>
+  );
 };

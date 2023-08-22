@@ -121,9 +121,9 @@ export const TerminalTab: React.FC<{
   const knownDepartures = terminalInfo.departures.filter(
     (dep) => dep.rsn === rsn
   );
-  const knownTripIds = knownDepartures.map((d) => d.tripId);
+  const knownTripIds = new Set(knownDepartures.map((d) => d.tripId));
   const activeMissingDepartures = vessels.list.filter(
-    (v) => v.trip?.rsn === rsn && !knownTripIds.includes(v.trip.tripId)
+    (v) => v.trip?.rsn === rsn && !knownTripIds.has(v.trip.tripId)
   );
 
   const allDepartures: Departure[] = [
@@ -160,13 +160,13 @@ export const TerminalTab: React.FC<{
       </Box>
       <List sx={{ width: "100%", maxWidth: 600, bgcolor: "background.paper" }}>
         {allDepartures.length ? (
-          allDepartures.map((departure, i) => {
+          allDepartures.map((departure, index) => {
             const liveVessel = vessels.list.find(
               (v) => v.trip?.tripId === departure.tripId
             );
             return (
               <Fragment key={departure.tripId}>
-                {!!i && <Divider variant="inset" component="li" />}
+                {!!index && <Divider variant="inset" component="li" />}
                 <VesselRow dep={departure} liveVessel={liveVessel} />
               </Fragment>
             );

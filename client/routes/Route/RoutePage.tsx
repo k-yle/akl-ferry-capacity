@@ -4,8 +4,8 @@ import _SwipeableViews from "react-swipeable-views";
 import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";
-import { TerminalTab } from "./TerminalTab.tsx";
 import { FerryRoute } from "../../types.def.ts";
+import { TerminalTab } from "./TerminalTab.tsx";
 
 // @ts-expect-error esm crap
 const SwipeableViews = _SwipeableViews as typeof _SwipeableViews.default;
@@ -40,7 +40,7 @@ export const RoutePage: React.FC = () => {
       <Navbar title={route.name} showBackButton>
         <Tabs
           value={tabIndex}
-          onChange={(_e, newValue) => setTabIndex(newValue)}
+          onChange={(_event, newValue) => setTabIndex(newValue)}
           indicatorColor="secondary"
           textColor="inherit"
           variant="fullWidth"

@@ -4,7 +4,7 @@ import type {
   Departure,
   Handler,
   TerminalLiveInfo,
-  TripObjFile,
+  TripObjectFile,
 } from "../../_helpers/types.def.js";
 
 /** cache data in memory for max 10mins */
@@ -34,8 +34,8 @@ export const onRequest: Handler = async (context) => {
     }
   ).then((r) => r.json());
 
-  const tripObj =
-    (await context.env.DB.get<TripObjFile>("tripObj", "json")) || {};
+  const tripObject =
+    (await context.env.DB.get<TripObjectFile>("tripObj", "json")) || {};
 
   const out: TerminalLiveInfo = {
     lastUpdated: Date.now(),
@@ -45,7 +45,7 @@ export const onRequest: Handler = async (context) => {
         movement.arrivalPlatformName || movement.departurePlatformName
       );
       return {
-        ...tripObj[movement.trip_id],
+        ...tripObject[movement.trip_id],
         tripId: movement.trip_id,
         destinationLive: movement.destinationDisplay,
         pier: Number.isNaN(pier) ? undefined : pier,

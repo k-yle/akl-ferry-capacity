@@ -100,7 +100,7 @@ export const VesselPage: React.FC = () => {
           // TODO: logo image in URL
           avatar={<Avatar>R</Avatar>}
           action={
-            <IconButton onClick={(e) => setMenuOpen(e.currentTarget)}>
+            <IconButton onClick={(event) => setMenuOpen(event.currentTarget)}>
               <MoreVert />
             </IconButton>
           }

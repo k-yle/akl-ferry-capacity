@@ -2,8 +2,8 @@ import type { GTFSRealtime } from "gtfs-types";
 import type {
   DatedCoord,
   Handler,
-  TripObj,
-  TripObjFile,
+  TripObject,
+  TripObjectFile,
   Vessel,
   VesselInfo,
 } from "../_helpers/types.def.js";
@@ -15,7 +15,7 @@ const CACHE_MINUTES = 1;
 
 export type VesselOnRoute = {
   vessel: Vessel;
-  trip: (Partial<TripObj> & { tripId: string }) | null;
+  trip: (Partial<TripObject> & { tripId: string }) | null;
   nameFromAIS: string | null;
   nmea2000: {
     lat: number;
@@ -43,12 +43,12 @@ export const onRequest: Handler = async (context) => {
     return Response.json({ cached: true, ...cache });
   }
 
-  const prevPositions = cache?.prevPositions || {};
+  const previousPositions = cache?.prevPositions || {};
 
   const vesselInfo =
     (await context.env.DB.get<VesselInfo>("vesselInfo", "json")) || {};
-  const tripObj =
-    (await context.env.DB.get<TripObjFile>("tripObj", "json")) || {};
+  const tripObject =
+    (await context.env.DB.get<TripObjectFile>("tripObj", "json")) || {};
 
   const realtime: GTFSRealtime = await fetch(
     "https://api.at.govt.nz/realtime/legacy",
@@ -79,19 +79,19 @@ export const onRequest: Handler = async (context) => {
       const lat = vehicle.vehicle!.position!.latitude;
       const lng = vehicle.vehicle!.position!.longitude;
 
-      prevPositions[vessel.mmsi] ||= [];
-      prevPositions[vessel.mmsi].unshift({ lat, lng, date: now });
-      prevPositions[vessel.mmsi].length = 5; // limit how many previous positions we store
+      previousPositions[vessel.mmsi] ||= [];
+      previousPositions[vessel.mmsi].unshift({ lat, lng, date: now });
+      previousPositions[vessel.mmsi].length = 5; // limit how many previous positions we store
 
       return {
         vessel,
         nameFromAIS: label === vehicle.id ? null : label,
-        trip: tripId ? { tripId, ...tripObj[tripId] } : null,
+        trip: tripId ? { tripId, ...tripObject[tripId] } : null,
         nmea2000: {
           lat,
           lng,
           heading: bearingStr ? +bearingStr : null,
-          cog: deriveCog(prevPositions[vessel.mmsi]),
+          cog: deriveCog(previousPositions[vessel.mmsi]),
           speedKts: maybeSpeedKmph ? maybeSpeedKmph / 1.852 : null,
           navStatus: maybeSpeedKmph ? "UnderWayUsingEngine" : "Moored",
         },
@@ -101,7 +101,7 @@ export const onRequest: Handler = async (context) => {
   const output: VesselPositionsFile = {
     list: vesselsOnRoute,
     lastUpdated: now,
-    prevPositions,
+    prevPositions: previousPositions,
   };
 
   await context.env.DB.put("vesselPositions", JSON.stringify(output));

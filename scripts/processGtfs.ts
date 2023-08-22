@@ -6,8 +6,8 @@ import { promisify } from "node:util";
 import { Agency, Route, Trip, VehicleType } from "gtfs-types";
 import { Extract } from "unzip-stream";
 import { config as dotenv } from "dotenv";
+import type { TripObjectFile } from "../functions/_helpers/types.def.js";
 import { csvToJsonObject } from "./util/csvToJsonObject.js";
-import type { TripObjFile } from "../functions/_helpers/types.def.js";
 
 dotenv({ path: ".dev.vars" });
 
@@ -72,7 +72,7 @@ export async function fetchTimetables() {
   // 4. Merge GTFS tables into an object keyed by the trip_id
   //
   console.log("Merging tables...");
-  const tripObject: TripObjFile = {};
+  const tripObject: TripObjectFile = {};
   for (const tripId in trips) {
     const trip = trips[tripId][0];
     const route = routes[trip.route_id][0];
