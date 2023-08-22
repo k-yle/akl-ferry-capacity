@@ -1,22 +1,27 @@
-import { API_HEADERS } from "../constants.ts";
-import { tripObj } from "../db.ts";
-import type { AT, Departure, TerminalLiveInfo } from "../types.def.ts";
+import { API_HEADERS } from "../../_helpers/constants.js";
+import type {
+  AT,
+  Departure,
+  Handler,
+  TerminalLiveInfo,
+  TripObjFile,
+} from "../../_helpers/types.def.js";
 
 /** cache data in memory for max 10mins */
 const CACHE_MINUTES = 10;
 
-const cache: {
-  [stationId: string]: TerminalLiveInfo;
-} = {};
+export const onRequest: Handler = async (context) => {
+  const cache =
+    (await context.env.DB.get<{
+      [stationId: string]: TerminalLiveInfo;
+    }>("terminalLiveInfo", "json")) || {};
 
-export async function fetchTerminalDepartures(
-  stationId: number
-): Promise<TerminalLiveInfo> {
+  const stationId = +context.params.stationId;
   if (
     cache[stationId] &&
     (Date.now() - cache[stationId].lastUpdated) / 1000 / 60 < CACHE_MINUTES
   ) {
-    return cache[stationId];
+    return Response.json({ cached: true, ...cache[stationId] });
   }
 
   const atMovements: AT.StationAPIResponse = await fetch(
@@ -24,10 +29,13 @@ export async function fetchTerminalDepartures(
     {
       headers: {
         ...API_HEADERS,
-        "Ocp-Apim-Subscription-Key": process.env.AT_ALT_API_KEY!,
+        "Ocp-Apim-Subscription-Key": context.env.AT_ALT_API_KEY!,
       },
     }
   ).then((r) => r.json());
+
+  const tripObj =
+    (await context.env.DB.get<TripObjFile>("tripObj", "json")) || {};
 
   const out: TerminalLiveInfo = {
     lastUpdated: Date.now(),
@@ -49,5 +57,7 @@ export async function fetchTerminalDepartures(
 
   cache[stationId] = out;
 
-  return cache[stationId];
-}
+  await context.env.DB.put("terminalLiveInfo", JSON.stringify(cache));
+
+  return Response.json({ cached: false, ...cache[stationId] });
+};

@@ -1,8 +1,14 @@
 import type { GTFSRealtime } from "gtfs-types";
-import { tripObj, vesselInfo } from "../db.ts";
-import { DatedCoord, TripObj, Vessel } from "../types.def.ts";
-import { API_HEADERS } from "../constants.ts";
-import { deriveCog } from "../util/geo.ts";
+import type {
+  DatedCoord,
+  Handler,
+  TripObj,
+  TripObjFile,
+  Vessel,
+  VesselInfo,
+} from "../_helpers/types.def.js";
+import { API_HEADERS } from "../_helpers/constants.js";
+import { deriveCog } from "../_helpers/util/geo.js";
 
 /** cache data in memory for max 1min */
 const CACHE_MINUTES = 1;
@@ -20,30 +26,39 @@ export type VesselOnRoute = {
     navStatus: string; // 0-15 from n2k
   };
 };
+export type VesselPositionsFile = {
+  list: VesselOnRoute[];
+  lastUpdated: number;
+  prevPositions: { [mmsi: number]: DatedCoord[] };
+};
 
-// only cached in memory
-const prevPositions: { [mmsi: number]: DatedCoord[] } = {};
+export const onRequest: Handler = async (context) => {
+  const cache = await context.env.DB.get<VesselPositionsFile>(
+    "vesselPositions",
+    "json"
+  );
 
-let cache: [data: VesselOnRoute[], savedAt: number] | undefined;
-
-export async function fetchVesselsPositions(): Promise<
-  NonNullable<typeof cache>
-> {
-  if (cache && (Date.now() - cache[1]) / 1000 / 60 < CACHE_MINUTES) {
-    return cache;
+  const now = Date.now();
+  if (cache && (now - cache.lastUpdated) / 1000 / 60 < CACHE_MINUTES) {
+    return Response.json({ cached: true, ...cache });
   }
+
+  const prevPositions = cache?.prevPositions || {};
+
+  const vesselInfo =
+    (await context.env.DB.get<VesselInfo>("vesselInfo", "json")) || {};
+  const tripObj =
+    (await context.env.DB.get<TripObjFile>("tripObj", "json")) || {};
 
   const realtime: GTFSRealtime = await fetch(
     "https://api.at.govt.nz/realtime/legacy",
     {
       headers: {
         ...API_HEADERS,
-        "Ocp-Apim-Subscription-Key": process.env.AT_MAIN_API_KEY!,
+        "Ocp-Apim-Subscription-Key": context.env.AT_MAIN_API_KEY,
       },
     }
   ).then((r) => r.json());
-
-  const now = Date.now();
 
   const vesselsOnRoute = realtime.response.entity
     // filter out busses, trains, or unknown MMSI numbers
@@ -83,7 +98,13 @@ export async function fetchVesselsPositions(): Promise<
       };
     });
 
-  cache = [vesselsOnRoute, now];
+  const output: VesselPositionsFile = {
+    list: vesselsOnRoute,
+    lastUpdated: now,
+    prevPositions,
+  };
 
-  return cache;
-}
+  await context.env.DB.put("vesselPositions", JSON.stringify(output));
+
+  return Response.json({ cached: false, ...output });
+};

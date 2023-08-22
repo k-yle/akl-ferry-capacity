@@ -1,4 +1,6 @@
 node_modules
 .env
+.dev.vars
 tmp
 dist
+.wrangler

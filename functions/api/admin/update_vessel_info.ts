@@ -1,8 +1,5 @@
-import { promises as fs } from "node:fs";
-import { join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { Vessel, VesselInfo } from "../types.def.ts";
-import { API_HEADERS, TEMP_FOLDER } from "../constants.ts";
+import { Handler, Vessel, VesselInfo } from "../../_helpers/types.def.js";
+import { API_HEADERS } from "../../_helpers/constants.js";
 
 type WikidataAPI = {
   results: {
@@ -27,12 +24,38 @@ const transportModeMap = (qId: string): keyof Vessel["capacity"] | undefined =>
 
 const getQId = (url: string) => url.split("/entity/")[1];
 
-export async function fetchVesselInfo() {
-  const __dirname = fileURLToPath(new URL(".", import.meta.url));
-  const query = await fs.readFile(
-    join(__dirname, "../../queryVesselInfo.sparql"),
-    "utf8"
-  );
+export const onRequest: Handler = async (context) => {
+  // check for ?authentication=****
+  const { searchParams } = new URL(context.request.url);
+  if (searchParams.get("authentication") !== context.env.UPLOAD_TOKEN) {
+    return Response.json({ error: "unauthenticated" });
+  }
+
+  const query = `
+    SELECT DISTINCT ?vessel ?vesselLabel ?image ?loa ?mmsi ?capacity ?capacityMode ?operator ?operatorLabel ?operatorStartTime ?operatorEndTime
+    WHERE
+    {
+      ?vessel wdt:P31/wdt:P279* wd:Q25653; # instanceof ferry
+              wdt:P8047 wd:Q664. # with country of registry = NZ
+
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mi". }
+
+      OPTIONAL {?vessel wdt:P18 ?image .}
+      OPTIONAL {?vessel wdt:P2043 ?loa .}
+      ?vessel wdt:P587 ?mmsi . # required, otherwise the data is useless to us
+      OPTIONAL {
+        ?vessel p:P1083 ?capacityB .
+        ?capacityB ps:P1083 ?capacity .
+        ?capacityB pq:P518 ?capacityMode .
+      }
+      OPTIONAL {
+        ?vessel p:P137 ?operatorB .
+        ?operatorB ps:P137 ?operator .
+        OPTIONAL { ?operatorB pq:P580 ?operatorStartTime . }
+        OPTIONAL { ?operatorB pq:P582 ?operatorEndTime . }
+      }
+    }
+  `;
 
   const req = await fetch(
     `https://query.wikidata.org/sparql?query=${encodeURIComponent(query)}`,
@@ -90,10 +113,7 @@ export async function fetchVesselInfo() {
     }
   }
 
-  await fs.mkdir(TEMP_FOLDER, { recursive: true });
+  await context.env.DB.put("vesselInfo", JSON.stringify(vesselInfo));
 
-  await fs.writeFile(
-    join(TEMP_FOLDER, "vesselInfo.json"),
-    JSON.stringify(vesselInfo, null, 2)
-  );
-}
+  return new Response("OK");
+};

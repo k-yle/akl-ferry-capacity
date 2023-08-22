@@ -1,4 +1,4 @@
-import type { FERRY_TERMINALS } from "./constants.ts";
+import type { FERRY_TERMINALS } from "./constants.js";
 
 export type Coord = { lat: number; lng: number };
 export type DatedCoord = Coord & { date: number };
@@ -95,3 +95,10 @@ export namespace AT {
     };
   };
 }
+
+export type Handler = PagesFunction<{
+  AT_MAIN_API_KEY: string;
+  AT_ALT_API_KEY: string;
+  UPLOAD_TOKEN: string;
+  DB: KVNamespace;
+}>;

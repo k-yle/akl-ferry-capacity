@@ -1,12 +1,15 @@
 {
   "name": "akl-ferry-capacity",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "author": "Kyle Hensel",
   "scripts": {
-    "start-client": "vite",
-    "start-server": "ts-node --esm server/index.ts",
+    "process-gtfs": "ts-node --esm scripts/processGtfs.ts",
+    "lint": "eslint --ignore-path=.gitignore . && tsc",
+    "test": "echo 1",
+    "start": "wrangler pages dev -- npm run start-only-client",
+    "start-only-client": "vite",
     "build": "vite build"
   },
   "dependencies": {
@@ -17,7 +20,6 @@
     "@mui/material": "^5.12.1",
     "csv-parser": "^3.0.0",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2",
     "gtfs-types": "^2.2.0",
     "leaflet": "^1.9.3",
     "react": "^18.2.0",
@@ -28,7 +30,7 @@
     "unzip-stream": "^0.3.1"
   },
   "devDependencies": {
-    "@types/express": "^4.17.17",
+    "@cloudflare/workers-types": "^4.20230821.0",
     "@types/leaflet": "^1.9.3",
     "@types/node": "^18.15.13",
     "@types/react": "^18.0.38",
@@ -40,7 +42,8 @@
     "eslint-config-kyle": "^11.7.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
-    "vite": "^4.3.1"
+    "vite": "^4.3.1",
+    "wrangler": "^3.5.1"
   },
   "eslintConfig": {
     "extends": "kyle",

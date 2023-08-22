@@ -31,6 +31,5 @@ To contribute to the code:
 - Install Visual Studio Code
 - `cd` into the reposity
 - run `npm install`
-- run `npm run start-server` to start the server on http://localhost:52100
-- run `npm run start-client` to start the client on http://localhost:5210
-- open http://localhost:52100 in your web browser
+- run `npm run start` to start the server on http://localhost:8788
+- open http://localhost:8788 in your web browser

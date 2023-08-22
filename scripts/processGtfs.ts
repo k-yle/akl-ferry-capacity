@@ -1,12 +1,18 @@
 import { exec } from "node:child_process";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createReadStream, promises as fs } from "node:fs";
 import { promisify } from "node:util";
 import { Agency, Route, Trip, VehicleType } from "gtfs-types";
 import { Extract } from "unzip-stream";
-import { TEMP_FOLDER } from "../constants.ts";
-import { csvToJsonObject } from "../util/csvToJsonObject.ts";
-import type { TripObjFile } from "../types.def.ts";
+import { config as dotenv } from "dotenv";
+import { csvToJsonObject } from "./util/csvToJsonObject.js";
+import type { TripObjFile } from "../functions/_helpers/types.def.js";
+
+dotenv({ path: ".dev.vars" });
+
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
+export const TEMP_FOLDER = join(__dirname, "../tmp");
 
 // don't use the https://cdn01.at.govt.nz/data/gtfs.zip URL, that's the better
 // data source (it has school busses), but the IDs don't match the IDs used by
@@ -15,6 +21,9 @@ const AT_GTFS_URL = "https://gtfs.at.govt.nz/gtfs.zip";
 
 const execAsync = promisify(exec);
 export async function fetchTimetables() {
+  const token = process.env.UPLOAD_TOKEN;
+  if (!token) throw new Error("No UPLOAD_TOKEN configured");
+
   await fs.mkdir(TEMP_FOLDER, { recursive: true });
 
   //
@@ -88,5 +97,21 @@ export async function fetchTimetables() {
     JSON.stringify(tripObject, null, 2)
   );
 
+  //
+  // 6. Upload TripObj to the API
+  //
+  const response = await fetch(
+    "https://ferry.kyle.kiwi/api/admin/update_timetables",
+    {
+      method: "POST",
+      body: JSON.stringify(tripObject),
+      headers: { Authentication: token },
+    }
+  ).then((r) => r.json());
+
+  if (response.error) throw new Error(response.error);
+
   console.log("Done!");
 }
+
+fetchTimetables();

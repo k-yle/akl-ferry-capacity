@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext"],
+    "noEmit": true,
+    "moduleResolution": "Node16",
+    "types": ["@cloudflare/workers-types"]
+  },
+  "include": ["."]
+}

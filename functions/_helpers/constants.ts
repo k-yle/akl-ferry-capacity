@@ -1,9 +1,4 @@
-import { join } from "node:path";
-import { fileURLToPath } from "node:url";
-import type { FerryRoute, FerryTerminal } from "./types.def.ts";
-
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
-export const TEMP_FOLDER = join(__dirname, "../tmp");
+import type { FerryRoute, FerryTerminal } from "./types.def.js";
 
 export const FERRY_TERMINALS = {
   21779: ["Hobsonville", -36.78759, 174.67225],
