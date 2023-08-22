@@ -125,7 +125,7 @@ export const VesselPage: React.FC = () => {
         <CardContent>
           <Typography variant="body2" color="text.secondary">
             <strong>Capacity:</strong> {vessel.vessel.capacity.pax} passengers +{" "}
-            {vessel.vessel.capacity.bike} bikes
+            {vessel.vessel.capacity.bike || <em>Unknown</em>} bikes
             <br />
             <strong>Built:</strong> 27 years ago
             {/** TODO: incorret info */}

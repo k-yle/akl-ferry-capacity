@@ -15,11 +15,13 @@ import {
 import { DirectionsBoat } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext.tsx";
-import type { FERRY_TERMINALS } from "../../../server/constants.ts";
-import type { Departure } from "../../../server/types.def.ts";
-import type { VesselOnRoute } from "../../../server/api/fetchVesselsPositions.ts";
 import { useTerminalInfo } from "../../hooks/useTerminalInfo.ts";
 import { getRelativeDate } from "../../helpers/timeAgo.ts";
+import type {
+  Departure,
+  FERRY_TERMINALS,
+  VesselOnRoute,
+} from "../../types.def.ts";
 
 const hhmm = (date: Date) => {
   return [

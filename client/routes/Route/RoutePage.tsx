@@ -4,8 +4,8 @@ import _SwipeableViews from "react-swipeable-views";
 import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";
-import { FerryRoute } from "../../../server/types.def.ts";
 import { TerminalTab } from "./TerminalTab.tsx";
+import { FerryRoute } from "../../types.def.ts";
 
 // @ts-expect-error esm crap
 const SwipeableViews = _SwipeableViews as typeof _SwipeableViews.default;

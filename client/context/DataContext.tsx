@@ -6,8 +6,11 @@ import {
   useCallback,
 } from "react";
 import { appFetch } from "../api/appFetch.ts";
-import type { FERRY_ROUTES, FERRY_TERMINALS } from "../../server/constants.ts";
-import { VesselOnRoute } from "../../server/api/fetchVesselsPositions.ts";
+import type {
+  FERRY_ROUTES,
+  FERRY_TERMINALS,
+  VesselOnRoute,
+} from "../types.def.ts";
 
 type StaticInfo = {
   terminals: typeof FERRY_TERMINALS;
@@ -35,7 +38,9 @@ export const DataProvider: React.FC<React.PropsWithChildren> = ({
 
   const updateVesselPositions = useCallback(async () => {
     try {
-      setVessels(await appFetch<IDataContext["vessels"]>("/api/vessels"));
+      setVessels(
+        await appFetch<IDataContext["vessels"]>("/api/vessel_positions")
+      );
     } catch (ex: any) {
       setError(ex);
     }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { appFetch } from "../api/appFetch.ts";
-import type { TerminalLiveInfo } from "../../server/types.def.ts";
+import type { TerminalLiveInfo } from "../types.def.ts";
 
 export function useTerminalInfo(
   stationId: number

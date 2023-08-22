@@ -7,6 +7,5 @@
     "noEmit": true,
     "moduleResolution": "Node16",
     "types": ["@cloudflare/workers-types"]
-  },
-  "include": ["."]
+  }
 }
