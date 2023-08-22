@@ -1,14 +1,10 @@
 import { useContext, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
-import _SwipeableViews from "react-swipeable-views";
 import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";
 import { FerryRoute } from "../../types.def.ts";
 import { TerminalTab } from "./TerminalTab.tsx";
-
-// @ts-expect-error esm crap
-const SwipeableViews = _SwipeableViews as typeof _SwipeableViews.default;
 
 const TabPanel: React.FC<{ visible: boolean } & React.PropsWithChildren> = ({
   children,
@@ -50,13 +46,13 @@ export const RoutePage: React.FC = () => {
           ))}
         </Tabs>
       </Navbar>
-      <SwipeableViews axis="x" index={tabIndex} onChangeIndex={setTabIndex}>
+      <>
         {route.stationIds.map((station, index) => (
           <TabPanel key={station} visible={index === tabIndex}>
             <TerminalTab stationId={station} rsn={rsn} />
           </TabPanel>
         ))}
-      </SwipeableViews>
+      </>
     </>
   );
 };
