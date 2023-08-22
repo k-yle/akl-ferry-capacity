@@ -84,6 +84,8 @@ export async function fetchTimetables() {
         operator: agency,
         destination: trip.trip_headsign || "Unknown",
         // TODO: get trip start & end times from stop_times.txt
+        // TODO: once we have this info, the UI can be improved a lot.
+        // e.g. if the vessel is still set to an old route, we can ignore it.
       };
     }
   }

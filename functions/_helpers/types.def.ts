@@ -8,6 +8,8 @@ export type Vessel = {
   qId: string;
   mmsi: number;
   image?: string;
+  /** ISO Date */
+  startDate?: string;
 
   loa?: number;
   width?: number;
@@ -18,6 +20,8 @@ export type Vessel = {
     qId: string;
     start?: string;
     end?: string;
+    wikipedia?: string;
+    facebook?: string;
   }[];
   capacity: {
     pax?: number;

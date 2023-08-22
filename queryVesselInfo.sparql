@@ -1,4 +1,4 @@
-SELECT DISTINCT ?vessel ?vesselLabel ?image ?loa ?mmsi ?capacity ?capacityMode ?operator ?operatorLabel ?operatorStartTime ?operatorEndTime
+SELECT DISTINCT ?vessel ?vesselLabel ?image ?loa ?mmsi ?capacity ?capacityMode ?operator ?operatorLabel ?operatorStartTime ?operatorEndTime ?operatorWikipedia ?operatorFacebook ?startDate
 WHERE
 {
   ?vessel wdt:P31/wdt:P279* wd:Q25653; # instanceof ferry
@@ -8,6 +8,7 @@ WHERE
 
   OPTIONAL {?vessel wdt:P18 ?image .}
   OPTIONAL {?vessel wdt:P2043 ?loa .}
+  OPTIONAL {?vessel wdt:P729 ?startDate .}
   ?vessel wdt:P587 ?mmsi . # required, otherwise the data is useless to us
   OPTIONAL {
     ?vessel p:P1083 ?capacityB .
@@ -19,5 +20,10 @@ WHERE
     ?operatorB ps:P137 ?operator .
     OPTIONAL { ?operatorB pq:P580 ?operatorStartTime . }
     OPTIONAL { ?operatorB pq:P582 ?operatorEndTime . }
+    OPTIONAL { ?operator wdt:P2013 ?operatorFacebook . }
+    OPTIONAL {
+      ?operatorWikipedia schema:about ?operator.
+      ?operatorWikipedia schema:isPartOf <https://en.wikipedia.org/>.
+    }
   }
 }

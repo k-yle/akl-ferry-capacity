@@ -14,9 +14,9 @@ import {
 } from "@mui/material";
 import { DirectionsBoat } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import TimeAgo from "react-timeago-i18n";
 import { DataContext } from "../../context/DataContext.tsx";
 import { useTerminalInfo } from "../../hooks/useTerminalInfo.ts";
-import { getRelativeDate } from "../../helpers/timeAgo.ts";
 import type {
   Departure,
   FERRY_TERMINALS,
@@ -176,7 +176,7 @@ export const TerminalTab: React.FC<{
         )}
       </List>
       <Typography variant="body2">
-        Updated {getRelativeDate(new Date(vessels.lastUpdated))}
+        Updated <TimeAgo date={new Date(vessels.lastUpdated)} />
       </Typography>
     </div>
   );

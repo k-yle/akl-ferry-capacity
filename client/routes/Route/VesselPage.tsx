@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import TimeAgo from "react-timeago-i18n";
 import {
   Alert,
   Avatar,
@@ -46,17 +47,23 @@ export const VesselPage: React.FC = () => {
     );
   }
 
-  const owner = vessel.vessel.operators[0].name;
+  // the backend ensures the first operator is the current one
+  const currentOwner = vessel.vessel.operators[0];
+
   const serviceProvider = vessel.trip?.operator;
-  const differentOperator = serviceProvider && serviceProvider !== owner;
+  const differentOperator =
+    serviceProvider && serviceProvider !== currentOwner.name;
 
   const ownerLink = (
     <a
-      href={`https://wikidata.org/wiki/${vessel.vessel.operators[0].qId}`}
+      href={
+        currentOwner.wikipedia ||
+        `https://wikidata.org/wiki/${currentOwner.qId}`
+      }
       target="_blank"
       rel="noopener noreferrer"
     >
-      {owner}
+      {currentOwner.name}
     </a>
   );
 
@@ -97,15 +104,23 @@ export const VesselPage: React.FC = () => {
 
       <Card sx={{ maxWidth: 345, margin: "32px auto" }}>
         <CardHeader
-          // TODO: logo image in URL
-          avatar={<Avatar>R</Avatar>}
+          avatar={
+            <Avatar
+              src={
+                currentOwner.facebook
+                  ? `https://graph.facebook.com/${currentOwner.facebook}/picture?type=large`
+                  : undefined
+              }
+            >
+              ?
+            </Avatar>
+          }
           action={
             <IconButton onClick={(event) => setMenuOpen(event.currentTarget)}>
               <MoreVert />
             </IconButton>
           }
           title={vessel.vessel.name}
-          // TODO: fix operator everywhere
           subheader={
             differentOperator ? (
               <>
@@ -126,9 +141,13 @@ export const VesselPage: React.FC = () => {
           <Typography variant="body2" color="text.secondary">
             <strong>Capacity:</strong> {vessel.vessel.capacity.pax} passengers +{" "}
             {vessel.vessel.capacity.bike || <em>Unknown</em>} bikes
-            <br />
-            <strong>Built:</strong> 27 years ago
-            {/** TODO: incorret info */}
+            {vessel.vessel.startDate && (
+              <>
+                <br />
+                <strong>Built:</strong>{" "}
+                <TimeAgo date={vessel.vessel.startDate} />
+              </>
+            )}
             <br />
             {vessel.trip && (
               <>

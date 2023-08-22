@@ -14,6 +14,9 @@ type WikidataAPI = {
       operatorLabel?: { type: "literal"; value: string };
       operatorStartTime?: { type: "uri"; value: string };
       operatorEndTime?: { type: "uri"; value: string };
+      operatorWikipedia?: { type: "uri"; value: string };
+      operatorFacebook?: { type: "literal"; value: string };
+      startDate?: { type: "literal"; value: string };
       mmsi: { type: "literal"; value: string };
     }[];
   };
@@ -32,7 +35,7 @@ export const onRequest: Handler = async (context) => {
   }
 
   const query = `
-    SELECT DISTINCT ?vessel ?vesselLabel ?image ?loa ?mmsi ?capacity ?capacityMode ?operator ?operatorLabel ?operatorStartTime ?operatorEndTime
+    SELECT DISTINCT ?vessel ?vesselLabel ?image ?loa ?mmsi ?capacity ?capacityMode ?operator ?operatorLabel ?operatorStartTime ?operatorEndTime ?operatorWikipedia ?operatorFacebook ?startDate
     WHERE
     {
       ?vessel wdt:P31/wdt:P279* wd:Q25653; # instanceof ferry
@@ -42,6 +45,7 @@ export const onRequest: Handler = async (context) => {
 
       OPTIONAL {?vessel wdt:P18 ?image .}
       OPTIONAL {?vessel wdt:P2043 ?loa .}
+      OPTIONAL {?vessel wdt:P729 ?startDate .}
       ?vessel wdt:P587 ?mmsi . # required, otherwise the data is useless to us
       OPTIONAL {
         ?vessel p:P1083 ?capacityB .
@@ -53,6 +57,11 @@ export const onRequest: Handler = async (context) => {
         ?operatorB ps:P137 ?operator .
         OPTIONAL { ?operatorB pq:P580 ?operatorStartTime . }
         OPTIONAL { ?operatorB pq:P582 ?operatorEndTime . }
+        OPTIONAL { ?operator wdt:P2013 ?operatorFacebook . }
+        OPTIONAL {
+          ?operatorWikipedia schema:about ?operator.
+          ?operatorWikipedia schema:isPartOf <https://en.wikipedia.org/>.
+        }
       }
     }
   `;
@@ -78,8 +87,11 @@ export const onRequest: Handler = async (context) => {
     };
 
     // maybe save simple attributes
-    if (row.image) vesselInfo[mmsi].image = row.image.value;
+    if (row.image) {
+      vesselInfo[mmsi].image = row.image.value.replace("http://", "https://");
+    }
     if (row.loa) vesselInfo[mmsi].loa = +row.loa.value;
+    if (row.startDate) vesselInfo[mmsi].startDate = row.startDate.value;
 
     // maybe save capacity
     if (row.capacity && row.capacityMode) {
@@ -100,6 +112,8 @@ export const onRequest: Handler = async (context) => {
         name,
         start: row.operatorStartTime?.value,
         end: row.operatorEndTime?.value,
+        wikipedia: row.operatorWikipedia?.value,
+        facebook: row.operatorFacebook?.value,
       };
 
       // the API gives us back duplicates, so filter them out
@@ -109,6 +123,11 @@ export const onRequest: Handler = async (context) => {
       );
       if (!isDuplicate) {
         vesselInfo[mmsi].operators.push(operator);
+
+        // sort by start date, and put entries with no start date first
+        vesselInfo[mmsi].operators = vesselInfo[mmsi].operators
+          .sort((a, b) => +new Date(a.start!) - +new Date(b.start!))
+          .reverse();
       }
     }
   }

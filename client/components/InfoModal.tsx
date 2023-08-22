@@ -30,13 +30,74 @@ export const InfoModal: React.FC<{ onClose(): void }> = ({ onClose }) => {
           <br />
           All this data is freely available:
         </Typography>
-        {/* TODO: better attribution */}
         <ul>
-          <li>Timetables are sourced from AT</li>
-          <li>Live positions are from AT and AIS data</li>
-          <li>Vessel information is from Wikipedia and Wikidata</li>
-          <li>Vessel photos are from Wikimedia Commons</li>
-          <li>Map data is &copy; OpenStreetMap</li>
+          <li>
+            Timetables are sourced from{" "}
+            <a
+              href="https://at.govt.nz/about-us/at-data-sources/general-transit-feed-specification"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              AT
+            </a>
+          </li>
+          <li>
+            Live positions are from{" "}
+            <a
+              href="https://dev-portal.at.govt.nz"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              AT
+            </a>{" "}
+            and{" "}
+            <a
+              href="https://en.wikipedia.org/wiki/Automatic_identification_system"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              AIS
+            </a>{" "}
+            data
+          </li>
+          <li>
+            Vessel information is from{" "}
+            <a
+              href="https://en.wikipedia.org/wiki/WP:C"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Wikipedia
+            </a>{" "}
+            and{" "}
+            <a
+              href="https://wikidata.org/wiki/Wikidata:Copyright"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Wikidata
+            </a>
+          </li>
+          <li>
+            Vessel photos are from{" "}
+            <a
+              href="https://commons.wikimedia.org/wiki/Commons:Licensing"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Wikimedia Commons
+            </a>
+          </li>
+          <li>
+            Map data is &copy;{" "}
+            <a
+              href="https://osm.org/copyright"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              OpenStreetMap
+            </a>
+          </li>
         </ul>
       </Box>
     </Modal>
