@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
 import { Navbar } from "../../components/Navbar.tsx";
@@ -21,15 +21,33 @@ export const RoutePage: React.FC = () => {
   const { routes, terminals } = useContext(DataContext);
   const rsn = useParams().rsn!;
 
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState<number | undefined>(undefined);
 
-  if (!routes || !terminals) return <CircularProgress />;
-
-  const route = Object.values(routes).find((cat) => rsn in cat)?.[
+  const route = Object.values(routes || {}).find((cat) => rsn in cat)?.[
     rsn as never
   ] as FerryRoute | undefined;
 
+  useEffect(() => {
+    if (!route || tabIndex !== undefined) return;
+
+    // if tabIndex is not yet defined, populate it from the URL
+    const defaultIndex = route.stationIds.indexOf(
+      +window.location.hash.slice(2) as never
+    );
+    setTabIndex(defaultIndex === -1 ? 0 : defaultIndex);
+  }, [route, tabIndex]);
+
+  useEffect(() => {
+    // update the URL when the tabIndex changes
+    if (!route || tabIndex === undefined) return;
+    window.history.replaceState("", "", `#/${route.stationIds[tabIndex]}`);
+  }, [route, tabIndex]);
+
+  if (!routes || !terminals) return <CircularProgress />;
+
   if (!route) return <Navigate to="/" />;
+
+  if (tabIndex === undefined) return <CircularProgress />;
 
   return (
     <>
