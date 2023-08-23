@@ -1,4 +1,4 @@
-name: test
+name: process_gtfs
 
 on:
   schedule:
@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  ci:
+  process_gtfs:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [18.x]
 
     steps:
       - name: ⏬ Checkout
