@@ -37,7 +37,7 @@ describe("getDatesForTrip", () => {
       "2023-02-01", // We
       "2023-02-06", // Mo
       "2023-02-08", // We
-      "2023-02-13", // Mo - end date is inclusive
+      // last Mo missing since the endDate is exclusive
     ]);
   });
 });

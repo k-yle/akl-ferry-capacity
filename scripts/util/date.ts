@@ -15,26 +15,19 @@ type DayName = (typeof DAY_NAMES)[number];
 const getNextDayOfTheWeek = (dayName: DayName, startDate: Date): Date => {
   const dayOfWeek = DAY_NAMES.indexOf(dayName);
   if (dayOfWeek < 0) throw new Error("Invalid day");
-  startDate.setHours(0, 0, 0, 0);
-  startDate.setDate(
-    startDate.getDate() + ((dayOfWeek + 7 - startDate.getDay()) % 7)
+  startDate.setUTCHours(0, 0, 0, 0);
+  startDate.setUTCDate(
+    startDate.getUTCDate() + ((dayOfWeek + 7 - startDate.getUTCDay()) % 7)
   );
   return startDate;
 };
 
 /** adds hyphens to the ISODate */
 const parseGTFSDate = (date: string) =>
-  date
+  `${date
     .match(/(\d{4})(\d{2})(\d{2})/)!
     .slice(1)
-    .join("-");
-
-const toISODate = (date: Date) =>
-  [
-    date.getFullYear(),
-    `${date.getMonth() + 1}`.padStart(2, "0"),
-    `${date.getDate()}`.padStart(2, "0"),
-  ].join("-");
+    .join("-")}T00:00:00Z`;
 
 /**
  * parses `calendar.txt` and `calendar_dates.txt`, returning
@@ -57,14 +50,14 @@ export const getDatesForTrip = (
           new Date(+nextDay + 1000 * 60 * 60 * 24)
         );
         if (+nextDay < +endDate) {
-          dates.push(toISODate(nextDay));
+          dates.push(nextDay.toISOString().split("T")[0]);
         } else break;
       }
     }
   }
 
   for (const exception of exceptions) {
-    const isoDate = parseGTFSDate(exception.date);
+    const isoDate = parseGTFSDate(exception.date).split("T")[0];
     if (exception.exception_type === ExceptionType.SERVICE_ADDED) {
       // added services
       dates.push(isoDate);
