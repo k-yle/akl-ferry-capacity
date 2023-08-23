@@ -1,0 +1,15 @@
+{
+  "short_name": "Ferry Capacity",
+  "name": "Ferry Capacity",
+  "icons": [
+    {
+      "src": "https://em-content.zobj.net/source/microsoft/319/ship_1f6a2.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#009688",
+  "background_color": "#ffffff"
+}
