@@ -1,9 +1,9 @@
 import { Handler } from "../../_helpers/types.def.js";
 
 export const onRequest: Handler = async (context) => {
-  // TODO: due to resource limitations, the logic runs outside of
+  // due to resource limitations, the logic runs outside of
   // CF workers, and uploads the result to this endpoint, which just
-  // saves the JSON.
+  // saves the JSON. It is triggered once a week by GitHub Actions.
 
   if (
     context.request.method !== "POST" ||
