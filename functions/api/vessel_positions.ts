@@ -60,11 +60,13 @@ export const onRequest: Handler = async (context) => {
     }
   ).then((r) => r.json());
 
-  const vesselsOnRoute = realtime.response.entity
-    // filter out busses, trains, or unknown MMSI numbers
+  const vesselsOnRoute = realtime.response
+    .entity! // filter out busses, trains, or unknown MMSI numbers
     .filter(
       (vehicle) =>
-        vehicle.vehicle?.position && vehicle.vehicle.vehicle.id in vesselInfo
+        vehicle.vehicle?.position &&
+        vehicle.vehicle?.vehicle &&
+        vehicle.vehicle.vehicle.id in vesselInfo
     )
     // merge with vessel static data
     .map((vehicle): VesselOnRoute => {
@@ -74,7 +76,7 @@ export const onRequest: Handler = async (context) => {
 
       const tripId =
         vehicle.trip_update?.trip?.trip_id || vehicle.vehicle?.trip?.trip_id;
-      const label = vehicle.vehicle!.vehicle.label;
+      const label = vehicle.vehicle!.vehicle!.label;
 
       const lat = vehicle.vehicle!.position!.latitude;
       const lng = vehicle.vehicle!.position!.longitude;

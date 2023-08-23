@@ -8,8 +8,8 @@
     "strict": true,
     "esModuleInterop": true,
     "noEmit": true,
-    "isolatedModules": false, // bc TS2748
-    "verbatimModuleSyntax": false, // bc TS2748
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,

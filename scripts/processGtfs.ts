@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createReadStream, promises as fs } from "node:fs";
 import { promisify } from "node:util";
-import { Agency, Route, Trip, VehicleType } from "gtfs-types";
+import { type Agency, type Route, type Trip, VehicleType } from "gtfs-types";
 import { Extract } from "unzip-stream";
 import { config as dotenv } from "dotenv";
 import type { TripObjectFile } from "../functions/_helpers/types.def.js";

@@ -3,7 +3,7 @@ import { useParams, Navigate } from "react-router-dom";
 import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";
-import { FerryRoute } from "../../types.def.ts";
+import type { FerryRoute } from "../../types.def.ts";
 import { TerminalTab } from "./TerminalTab.tsx";
 
 const TabPanel: React.FC<{ visible: boolean } & React.PropsWithChildren> = ({
