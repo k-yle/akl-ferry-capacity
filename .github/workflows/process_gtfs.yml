@@ -29,3 +29,5 @@ jobs:
 
       - name: 🚚 Run the GTFS Processor
         run: npm run process-gtfs
+        env:
+          UPLOAD_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
