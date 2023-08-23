@@ -79,7 +79,9 @@ export const VesselRow: React.FC<{
                 —{" "}
               </>
             )}
-            {liveVessel ? (
+            {dep.cancelled ? (
+              <Chip label="Cancelled" color="error" size="small" />
+            ) : liveVessel ? (
               <>
                 {liveVessel.vessel.name}
                 <br />
@@ -89,12 +91,6 @@ export const VesselRow: React.FC<{
               </>
             ) : (
               "Unknown Vessel"
-            )}
-            {dep.cancelled && (
-              <>
-                <br />
-                <Chip label="Cancelled" color="error" size="small" />
-              </>
             )}
           </>
         }
@@ -142,6 +138,8 @@ export const TerminalTab: React.FC<{
         // this is the only stuff we don't know
         time: "",
         pier: 0,
+        dates: [],
+        stopTimes: [],
       })
     ),
     ...knownDepartures,
@@ -177,7 +175,7 @@ export const TerminalTab: React.FC<{
         )}
       </List>
       <Typography variant="body2">
-        Updated <TimeAgo date={new Date(vessels.lastUpdated)} />
+        Updated <TimeAgo date={new Date(vessels.lastUpdated)} hideSeconds />
       </Typography>
     </div>
   );
