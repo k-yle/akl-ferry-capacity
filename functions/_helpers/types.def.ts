@@ -43,6 +43,7 @@ export type TripObject = {
   dates: string[];
   stopTimes: {
     stop: string;
+    pier: string | undefined;
     time: string;
   }[];
 };
@@ -116,7 +117,7 @@ export type Handler = PagesFunction<{
 
 export type VesselOnRoute = {
   vessel: Vessel;
-  trip: (Partial<TripObject> & { tripId: string }) | null;
+  trip: (TripObject & { tripId: string }) | null;
   nameFromAIS: string | null;
   nmea2000: {
     lat: number;

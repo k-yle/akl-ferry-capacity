@@ -117,6 +117,7 @@ export async function fetchTimetables() {
           const station = stops[stop.parent_station!][0];
           return {
             stop: station.stop_code!,
+            pier: stop.platform_code,
             time: (stopTime.departure_time || stopTime.arrival_time)!,
           };
         });
@@ -132,8 +133,6 @@ export async function fetchTimetables() {
         destination: trip.trip_headsign || "Unknown",
         dates,
         stopTimes: finalStopTimes,
-        // TODO: once we have this info, the UI can be improved a lot.
-        // e.g. if the vessel is still set to an old route, we can ignore it.
       };
     }
   }

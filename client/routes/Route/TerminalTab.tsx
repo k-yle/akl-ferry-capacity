@@ -38,7 +38,17 @@ export const VesselRow: React.FC<{
   return (
     <ListItem
       alignItems="flex-start"
-      secondaryAction={dep.time ? hhmm(new Date(dep.time)) : "Departed"}
+      secondaryAction={
+        <>
+          {hhmm(new Date(dep.time))}
+          {new Date(dep.time) < new Date() && (
+            <em>
+              <br />
+              Departed
+            </em>
+          )}
+        </>
+      }
       style={{
         background: dep.cancelled ? "#f3e0ff" : undefined,
         cursor: liveVessel ? "pointer" : undefined,
@@ -124,24 +134,40 @@ export const TerminalTab: React.FC<{
   );
 
   const allDepartures: Departure[] = [
-    ...activeMissingDepartures.map(
-      (vessel): Departure => ({
+    ...activeMissingDepartures.flatMap((vessel) => {
+      const trip = vessel.trip!;
+      const stopTime = trip.stopTimes.find((time) => +time.stop === stationId);
+      if (!stopTime) return [];
+
+      // true if the this stop is the last stop of the trip.
+      // in that case, there's no use showing it
+      const isLastStop =
+        trip.stopTimes.indexOf(stopTime) === trip.stopTimes.length - 1;
+
+      if (isLastStop) return [];
+
+      const time = ((d) => {
+        const [hh, mm] = stopTime.time.split(":");
+        d.setHours(+hh);
+        d.setMinutes(+mm);
+        return d.toISOString();
+      })(new Date());
+
+      const departure: Departure = {
         // consturct a fake departure with all the facts we know
         cancelled: false,
         operator: vessel.vessel.operators[0].name,
-        destinationLive:
-          vessel.trip!.destination?.split(" To ")[1] || "Unknown",
-        destination: vessel.trip!.destination || "Unknown",
+        destinationLive: trip.destination.split(" To ")[1],
+        destination: trip.destination,
         tripId: vessel.trip!.tripId,
         rsn,
-
-        // this is the only stuff we don't know
-        time: "",
-        pier: 0,
-        dates: [],
-        stopTimes: [],
-      })
-    ),
+        time,
+        pier: +(stopTime.pier || 0),
+        dates: vessel.trip!.dates,
+        stopTimes: vessel.trip!.stopTimes,
+      };
+      return [departure];
+    }),
     ...knownDepartures,
   ];
 
