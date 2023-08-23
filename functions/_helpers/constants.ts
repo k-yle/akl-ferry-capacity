@@ -16,6 +16,9 @@ export const FERRY_TERMINALS = {
   97501: ["Rakino", -36.72629, 174.95263],
   97701: ["Stanley Bay", -36.82801, 174.78129],
   98101: ["West Harbour", -36.81095, 174.64555],
+  97503: ["Coromandel", -36.80984, 175.46803], // Hannaford's Wharf
+  97504: ["Orapiu", -36.84494, 175.14926],
+  97505: ["Rotoroa", -36.81789, 175.19406],
 } satisfies Record<number, FerryTerminal>;
 
 export const FERRY_ROUTES = {
@@ -64,8 +67,13 @@ export const FERRY_ROUTES = {
       shortName: "Gulf Hbr",
       stationIds: [96001, 96901],
     },
+    MTIA: {
+      name: "Waiheke",
+      shortName: "Waiheke",
+      stationIds: [96001, 61000],
+    },
   },
-  gulf: {
+  tourist: {
     RANG: {
       name: "Rangitoto",
       shortName: "Rangi",
@@ -76,14 +84,12 @@ export const FERRY_ROUTES = {
       shortName: "Rakino",
       stationIds: [96001, 97501, 97701],
     },
-    MTIA: {
-      name: "Waiheke",
-      shortName: "Waiheke",
-      stationIds: [96001, 61000],
+    CORO: {
+      name: "Coromandel/Rotoroa/Orapiu",
+      shortName: "Coro",
+      stationIds: [96001, 97505, 97504, 97503],
     },
   },
-
-  // TODO: CORO
 } satisfies Record<string, Record<string, FerryRoute>>;
 
 export const API_HEADERS = {

@@ -39,6 +39,12 @@ export type TripObject = {
   rsn: string;
   operator: string;
   destination: string;
+  /** ISO Dates */
+  dates: string[];
+  stopTimes: {
+    stop: string;
+    time: string;
+  }[];
 };
 export type TripObjectFile = { [tripId: string]: TripObject };
 

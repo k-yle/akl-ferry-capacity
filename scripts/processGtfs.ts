@@ -3,11 +3,21 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createReadStream, promises as fs } from "node:fs";
 import { promisify } from "node:util";
-import { type Agency, type Route, type Trip, VehicleType } from "gtfs-types";
+import {
+  type Agency,
+  type Route,
+  type Trip,
+  VehicleType,
+  type Calendar,
+  type CalendarDates,
+  type Stop,
+  type StopTime,
+} from "gtfs-types";
 import { Extract } from "unzip-stream";
 import { config as dotenv } from "dotenv";
 import type { TripObjectFile } from "../functions/_helpers/types.def.js";
 import { csvToJsonObject } from "./util/csvToJsonObject.js";
+import { getDatesForTrip } from "./util/date.ts";
 
 dotenv({ path: ".dev.vars" });
 
@@ -21,6 +31,9 @@ const AT_GTFS_URL = "https://gtfs.at.govt.nz/gtfs.zip";
 
 const execAsync = promisify(exec);
 export async function fetchTimetables() {
+  /** if true, network requests are skipped */
+  const dryRun = process.argv.includes("--dry");
+
   const token = process.env.UPLOAD_TOKEN;
   if (!token) throw new Error("No UPLOAD_TOKEN configured");
 
@@ -29,14 +42,16 @@ export async function fetchTimetables() {
   //
   // 1. Download zip
   //
-  console.log(`Downloading GTFS Zip...`);
   const pathToZip = join(TEMP_FOLDER, "gtfs.zip");
 
-  const { stdout, stderr } = await execAsync(
-    `curl "${AT_GTFS_URL}" -o ${pathToZip}`
-  );
-  if (stdout) console.log(stdout);
-  if (stderr) console.error(stderr);
+  if (!dryRun) {
+    console.log(`Downloading GTFS Zip...`);
+    const { stdout, stderr } = await execAsync(
+      `curl "${AT_GTFS_URL}" -o ${pathToZip}`
+    );
+    if (stdout) console.log(stdout);
+    if (stderr) console.error(stderr);
+  }
 
   //
   // 2. Unzip
@@ -59,12 +74,28 @@ export async function fetchTimetables() {
     join(TEMP_FOLDER, "gtfs", "agency.txt"),
     "agency_id"
   );
+  const calendar = await csvToJsonObject<Calendar>(
+    join(TEMP_FOLDER, "gtfs", "calendar.txt"),
+    "service_id"
+  );
+  const calendarDates = await csvToJsonObject<CalendarDates>(
+    join(TEMP_FOLDER, "gtfs", "calendar_dates.txt"),
+    "service_id"
+  );
   const routes = await csvToJsonObject<Route>(
     join(TEMP_FOLDER, "gtfs", "routes.txt"),
     "route_id"
   );
   const trips = await csvToJsonObject<Trip>(
     join(TEMP_FOLDER, "gtfs", "trips.txt"),
+    "trip_id"
+  );
+  const stops = await csvToJsonObject<Stop>(
+    join(TEMP_FOLDER, "gtfs", "stops.txt"),
+    "stop_id"
+  );
+  const stopTimes = await csvToJsonObject<StopTime>(
+    join(TEMP_FOLDER, "gtfs", "stop_times.txt"),
     "trip_id"
   );
 
@@ -79,11 +110,28 @@ export async function fetchTimetables() {
     const agency = agencies[route.agency_id!]?.[0]?.agency_name || "Unknown";
 
     if (+route.route_type === VehicleType.FERRY) {
+      const finalStopTimes = stopTimes[tripId]
+        .sort((a, b) => +a.stop_sequence - +b.stop_sequence)
+        .map((stopTime) => {
+          const stop = stops[stopTime.stop_id][0];
+          const station = stops[stop.parent_station!][0];
+          return {
+            stop: station.stop_code!,
+            time: (stopTime.departure_time || stopTime.arrival_time)!,
+          };
+        });
+
+      const dates = getDatesForTrip(
+        calendar[trip.service_id][0],
+        calendarDates[trip.service_id]
+      );
+
       tripObject[tripId] = {
         rsn: route.route_short_name!,
         operator: agency,
         destination: trip.trip_headsign || "Unknown",
-        // TODO: get trip start & end times from stop_times.txt
+        dates,
+        stopTimes: finalStopTimes,
         // TODO: once we have this info, the UI can be improved a lot.
         // e.g. if the vessel is still set to an old route, we can ignore it.
       };
@@ -102,17 +150,20 @@ export async function fetchTimetables() {
   //
   // 6. Upload TripObj to the API
   //
-  const response = await fetch(
-    "https://ferry.kyle.kiwi/api/admin/update_timetables",
-    {
-      method: "POST",
-      body: JSON.stringify(tripObject),
-      headers: { Authentication: token },
-    }
-  ).then((r) => r.json());
+  if (!dryRun) {
+    console.log("Uploading result to server...");
+    const response = await fetch(
+      "https://ferry.kyle.kiwi/api/admin/update_timetables",
+      {
+        method: "POST",
+        body: JSON.stringify(tripObject),
+        headers: { Authentication: token },
+      }
+    ).then((r) => r.json());
 
-  if (typeof response === "object" && response && "error" in response) {
-    throw new Error(`${response.error}`);
+    if (typeof response === "object" && response && "error" in response) {
+      throw new Error(`${response.error}`);
+    }
   }
 
   console.log("Done!");
