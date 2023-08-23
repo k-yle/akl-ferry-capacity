@@ -1,1 +1,3 @@
 *.sparql linguist-detectable
+*.txt linguist-detectable
+*.txt linguist-language=sparql

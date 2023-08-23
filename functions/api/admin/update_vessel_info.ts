@@ -1,3 +1,4 @@
+import query from "../../_helpers/assets/queryVesselInfo.sparql.txt";
 import { Handler, Vessel, VesselInfo } from "../../_helpers/types.def.js";
 import { API_HEADERS } from "../../_helpers/constants.js";
 
@@ -33,38 +34,6 @@ export const onRequest: Handler = async (context) => {
   if (searchParams.get("authentication") !== context.env.UPLOAD_TOKEN) {
     return Response.json({ error: "unauthenticated" });
   }
-
-  const query = `
-    SELECT DISTINCT ?vessel ?vesselLabel ?image ?loa ?mmsi ?capacity ?capacityMode ?operator ?operatorLabel ?operatorStartTime ?operatorEndTime ?operatorWikipedia ?operatorFacebook ?startDate
-    WHERE
-    {
-      ?vessel wdt:P31/wdt:P279* wd:Q25653; # instanceof ferry
-              wdt:P8047 wd:Q664. # with country of registry = NZ
-
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mi". }
-
-      OPTIONAL {?vessel wdt:P18 ?image .}
-      OPTIONAL {?vessel wdt:P2043 ?loa .}
-      OPTIONAL {?vessel wdt:P729 ?startDate .}
-      ?vessel wdt:P587 ?mmsi . # required, otherwise the data is useless to us
-      OPTIONAL {
-        ?vessel p:P1083 ?capacityB .
-        ?capacityB ps:P1083 ?capacity .
-        ?capacityB pq:P518 ?capacityMode .
-      }
-      OPTIONAL {
-        ?vessel p:P137 ?operatorB .
-        ?operatorB ps:P137 ?operator .
-        OPTIONAL { ?operatorB pq:P580 ?operatorStartTime . }
-        OPTIONAL { ?operatorB pq:P582 ?operatorEndTime . }
-        OPTIONAL { ?operator wdt:P2013 ?operatorFacebook . }
-        OPTIONAL {
-          ?operatorWikipedia schema:about ?operator.
-          ?operatorWikipedia schema:isPartOf <https://en.wikipedia.org/>.
-        }
-      }
-    }
-  `;
 
   const request = await fetch(
     `https://query.wikidata.org/sparql?query=${encodeURIComponent(query)}`,

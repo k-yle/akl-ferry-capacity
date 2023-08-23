@@ -3,3 +3,6 @@ compatibility_date = "2023-08-14"
 kv_namespaces = [
     { binding = "DB", id = "ec8aa3300b904b56835a7ebe2ca30444", preview_id = "ec8aa3300b904b56835a7ebe2ca30444" }
 ]
+rules = [
+  { type = "Text", globs = ["**/*.sparql"], fallthrough = true }
+]
