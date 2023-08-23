@@ -111,7 +111,9 @@ export async function fetchTimetables() {
     }
   ).then((r) => r.json());
 
-  if (response.error) throw new Error(response.error);
+  if (typeof response === "object" && response && "error" in response) {
+    throw new Error(`${response.error}`);
+  }
 
   console.log("Done!");
 }

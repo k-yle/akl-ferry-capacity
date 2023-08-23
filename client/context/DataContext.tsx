@@ -40,7 +40,9 @@ export const DataProvider: React.FC<React.PropsWithChildren> = ({
   const updateVesselPositions = useCallback(async () => {
     try {
       setVessels(
-        await appFetch<IDataContext["vessels"]>("/api/vessel_positions")
+        await appFetch<NonNullable<IDataContext["vessels"]>>(
+          "/api/vessel_positions"
+        )
       );
     } catch (ex) {
       setError(repairError(ex));

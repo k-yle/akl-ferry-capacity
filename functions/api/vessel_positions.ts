@@ -1,36 +1,16 @@
 import type { GTFSRealtime } from "gtfs-types";
 import type {
-  DatedCoord,
   Handler,
-  TripObject,
   TripObjectFile,
-  Vessel,
   VesselInfo,
+  VesselOnRoute,
+  VesselPositionsFile,
 } from "../_helpers/types.def.js";
 import { API_HEADERS } from "../_helpers/constants.js";
 import { deriveCog } from "../_helpers/util/geo.js";
 
 /** cache data in memory for max 1min */
 const CACHE_MINUTES = 1;
-
-export type VesselOnRoute = {
-  vessel: Vessel;
-  trip: (Partial<TripObject> & { tripId: string }) | null;
-  nameFromAIS: string | null;
-  nmea2000: {
-    lat: number;
-    lng: number;
-    heading: number | null;
-    cog: number | null;
-    speedKts: number | null;
-    navStatus: string; // 0-15 from n2k
-  };
-};
-export type VesselPositionsFile = {
-  list: VesselOnRoute[];
-  lastUpdated: number;
-  prevPositions: { [mmsi: number]: DatedCoord[] };
-};
 
 export const onRequest: Handler = async (context) => {
   const cache = await context.env.DB.get<VesselPositionsFile>(

@@ -1,4 +1,4 @@
-import { Coord, DatedCoord } from "../types.def.js";
+import type { Coord, DatedCoord } from "../types.def.js";
 
 const { sin, cos, atan2, sqrt, PI: π } = Math;
 

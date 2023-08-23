@@ -1,4 +1,4 @@
-import { Box, Modal, SxProps, Typography } from "@mui/material";
+import { Box, Modal, type SxProps, Typography } from "@mui/material";
 
 const modalStyle: SxProps = {
   position: "absolute",

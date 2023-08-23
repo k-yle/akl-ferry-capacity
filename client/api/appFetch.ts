@@ -1,7 +1,9 @@
-export const appFetch = async <T>(path: string): Promise<T> => {
-  const resp = await fetch(window.location.origin + path).then((r) => r.json());
+export const appFetch = async <T extends object>(path: string): Promise<T> => {
+  const resp = await fetch(window.location.origin + path).then(
+    (r) => r.json() as Promise<T | { error: string }>
+  );
 
-  if (resp.error) throw new Error(resp.error);
+  if ("error" in resp) throw new Error(resp.error);
 
   return resp;
 };

@@ -107,3 +107,22 @@ export type Handler = PagesFunction<{
   UPLOAD_TOKEN: string;
   DB: KVNamespace;
 }>;
+
+export type VesselOnRoute = {
+  vessel: Vessel;
+  trip: (Partial<TripObject> & { tripId: string }) | null;
+  nameFromAIS: string | null;
+  nmea2000: {
+    lat: number;
+    lng: number;
+    heading: number | null;
+    cog: number | null;
+    speedKts: number | null;
+    navStatus: string; // 0-15 from n2k
+  };
+};
+export type VesselPositionsFile = {
+  list: VesselOnRoute[];
+  lastUpdated: number;
+  prevPositions: { [mmsi: number]: DatedCoord[] };
+};
