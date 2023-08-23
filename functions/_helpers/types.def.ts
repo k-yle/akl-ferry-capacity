@@ -25,6 +25,7 @@ export type Vessel = {
   }[];
   capacity: {
     pax?: number;
+    seats?: number;
     bike?: number;
   };
 };

@@ -24,7 +24,7 @@ type WikidataAPI = {
 };
 
 const transportModeMap = (qId: string): keyof Vessel["capacity"] | undefined =>
-  qId === "Q319604" ? "pax" : qId === "Q11442" ? "bike" : undefined;
+  ({ Q319604: "pax", Q11442: "bike", Q2207370: "seats" })[qId as never];
 
 const getQId = (url: string) => url.split("/entity/")[1];
 

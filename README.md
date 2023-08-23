@@ -13,12 +13,13 @@ flowchart TD
     VesselPositions["Vessel Positions"] -->|via AIS| AT
     Cancellations --> AT
 
-    VesselDetails["Vessel Capacities"] --> Wikidata
+    VesselDetails["Vessel Capacities"] -->|via Wikipedia| Wikidata
     VesselPhotos["Vessel Photos"] -->|via Wikimedia Commons| Wikidata
     Wikidata -->|via Sparql query| ThisApp[fa:fa-ship This App]
     AT -->|via AT API| ThisApp
     Timetables --> AT_GTFS[AT GTFS]
     AT_GTFS -->|via .zip file| ThisApp
+    Logos["Company Logos"] -->|via Facebook| Wikidata
 ```
 
 # Contributing to the code
