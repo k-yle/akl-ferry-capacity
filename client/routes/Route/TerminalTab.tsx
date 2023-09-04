@@ -17,11 +17,15 @@ import { useNavigate } from "react-router-dom";
 import TimeAgo from "react-timeago-i18n";
 import { DataContext } from "../../context/DataContext.tsx";
 import { useTerminalInfo } from "../../hooks/useTerminalInfo.ts";
-import type {
-  Departure,
-  FERRY_TERMINALS,
-  VesselOnRoute,
+import {
+  VesselTripConfidence,
+  type Departure,
+  type FERRY_TERMINALS,
+  type VesselOnRoute,
 } from "../../types.def.ts";
+
+/** services that departed longer than this ago will be hidden */
+const MAX_OLD_MINUTES = 10;
 
 const hhmm = (date: Date) => {
   return [
@@ -30,10 +34,47 @@ const hhmm = (date: Date) => {
   ].join(":");
 };
 
+const renderNameAndConfidence = (
+  name: string,
+  confidence: VesselTripConfidence
+) => {
+  switch (confidence) {
+    case VesselTripConfidence.CERTAIN: {
+      return name;
+    }
+    case VesselTripConfidence.VERY_LIKELY: {
+      return (
+        <>
+          <em>very likely</em> {name}
+        </>
+      );
+    }
+    case VesselTripConfidence.LIKELY: {
+      return (
+        <>
+          <em>probably</em> {name}
+        </>
+      );
+    }
+    case VesselTripConfidence.UNCERTAIN: {
+      return (
+        <>
+          <em>maybe</em> {name}
+        </>
+      );
+    }
+    default: {
+      confidence satisfies never;
+      return name; // impossible, just to keep eslint happy
+    }
+  }
+};
+
 export const VesselRow: React.FC<{
   dep: Departure;
   liveVessel?: VesselOnRoute;
-}> = ({ dep, liveVessel }) => {
+  confidence?: VesselTripConfidence;
+}> = ({ dep, liveVessel, confidence }) => {
   const navigate = useNavigate();
   return (
     <ListItem
@@ -62,7 +103,8 @@ export const VesselRow: React.FC<{
       <ListItemAvatar>
         {liveVessel ? (
           <img
-            src={liveVessel.vessel.image}
+            // the width option tells commons to load a thumbnail
+            src={`${liveVessel.vessel.image}?width=150`}
             alt={liveVessel.vessel.name}
             style={{ width: 50, borderRadius: 4 }}
           />
@@ -93,7 +135,7 @@ export const VesselRow: React.FC<{
               <Chip label="Cancelled" color="error" size="small" />
             ) : liveVessel ? (
               <>
-                {liveVessel.vessel.name}
+                {renderNameAndConfidence(liveVessel.vessel.name, confidence!)}
                 <br />
                 {liveVessel.vessel.capacity.seats ||
                   liveVessel.vessel.capacity.pax}{" "}
@@ -153,6 +195,11 @@ export const TerminalTab: React.FC<{
         return d.toISOString();
       })(new Date());
 
+      const minutesUntilDepature = (+new Date(time) - Date.now()) / 1000 / 60;
+
+      // hide if this trip departed over minutes ago
+      if (minutesUntilDepature < -MAX_OLD_MINUTES) return [];
+
       const departure: Departure = {
         // consturct a fake departure with all the facts we know
         cancelled: false,
@@ -187,12 +234,24 @@ export const TerminalTab: React.FC<{
         {allDepartures.length ? (
           allDepartures.map((departure, index) => {
             const liveVessel = vessels.list.find(
-              (v) => v.trip?.tripId === departure.tripId
+              (v) =>
+                v.trip?.tripId === departure.tripId ||
+                v.potentialNextTrip?.tripId === departure.tripId
             );
+            const confidence =
+              liveVessel?.trip?.tripId === departure.tripId
+                ? liveVessel.trip.confidence
+                : liveVessel?.potentialNextTrip?.tripId === departure.tripId
+                ? liveVessel.potentialNextTrip.confidence
+                : undefined;
             return (
               <Fragment key={departure.tripId}>
                 {!!index && <Divider variant="inset" component="li" />}
-                <VesselRow dep={departure} liveVessel={liveVessel} />
+                <VesselRow
+                  dep={departure}
+                  liveVessel={liveVessel}
+                  confidence={confidence}
+                />
               </Fragment>
             );
           })

@@ -128,6 +128,7 @@ export async function fetchTimetables() {
       );
 
       tripObject[tripId] = {
+        tripId,
         rsn: route.route_short_name!,
         operator: agency,
         destination: trip.trip_headsign || "Unknown",

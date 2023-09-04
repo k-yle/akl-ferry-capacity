@@ -36,6 +36,7 @@ export type VesselInfo = {
 
 /** merged the interested details from agency.txt, routes.txt, and trips.txt */
 export type TripObject = {
+  tripId: string;
   rsn: string;
   operator: string;
   destination: string;
@@ -49,7 +50,13 @@ export type TripObject = {
 };
 export type TripObjectFile = { [tripId: string]: TripObject };
 
-export type FerryTerminal = [name: string, lat: number, lng: number];
+export type FerryTerminal = [
+  name: string,
+  lat: number,
+  lng: number,
+  /** true if there are multiple berths that are often used interchangably */
+  hasLayoverSpace?: boolean,
+];
 export type FerryRoute = {
   name: string;
   shortName: string;
@@ -57,7 +64,6 @@ export type FerryRoute = {
 };
 
 export type Departure = TripObject & {
-  tripId: string;
   destinationLive: string;
   time: string;
   pier: number | undefined;
@@ -115,9 +121,40 @@ export type Handler = PagesFunction<{
   DB: KVNamespace;
 }>;
 
+/**
+ * How confident we are that the vessel is actually associated
+ * with the `tripId`.
+ */
+export enum VesselTripConfidence {
+  /** If the onboard transmitter is set to the correct `tripId` */
+  CERTAIN,
+  /**
+   * If the inbound vessel at a single-pier suburban terminal is
+   * scheduled to immediately return to the city centre, then the
+   * same vessel must operate the outbound trip.
+   */
+  VERY_LIKELY,
+  /**
+   * If the AIS destination is set to the correct route, and/or
+   * if exactly 1 vessel is underway toward this terminal, and there
+   * is no other destination that the vessel could be going to.
+   */
+  LIKELY,
+  /**
+   * If the vessel is berthed at the correct pier in the city centre,
+   * or if it operated the last service on this route.
+   */
+  UNCERTAIN,
+}
+
+export type TripWithConfidence = TripObject & {
+  confidence: VesselTripConfidence;
+};
+
 export type VesselOnRoute = {
   vessel: Vessel;
-  trip: (TripObject & { tripId: string }) | null;
+  trip: TripWithConfidence | null;
+  potentialNextTrip: TripWithConfidence | null;
   nameFromAIS: string | null;
   nmea2000: {
     lat: number;

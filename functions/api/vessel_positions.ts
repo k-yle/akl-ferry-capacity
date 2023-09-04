@@ -1,13 +1,15 @@
 import type { GTFSRealtime } from "gtfs-types";
-import type {
-  Handler,
-  TripObjectFile,
-  VesselInfo,
-  VesselOnRoute,
-  VesselPositionsFile,
+import {
+  VesselTripConfidence,
+  type Handler,
+  type TripObjectFile,
+  type VesselInfo,
+  type VesselOnRoute,
+  type VesselPositionsFile,
 } from "../_helpers/types.def.js";
 import { API_HEADERS } from "../_helpers/constants.js";
 import { deriveCog } from "../_helpers/util/geo.js";
+import { guessVesselFromPreviousTrip } from "../_helpers/guesswork/guessVesselFromPreviousTrip.js";
 
 /** cache data in memory for max 1min */
 const CACHE_MINUTES = 1;
@@ -65,10 +67,16 @@ export const onRequest: Handler = async (context) => {
       previousPositions[vessel.mmsi].unshift({ lat, lng, date: now });
       previousPositions[vessel.mmsi].length = 5; // limit how many previous positions we store
 
-      return {
+      const result: VesselOnRoute = {
         vessel,
         nameFromAIS: label === vehicle.id ? null : label,
-        trip: tripId ? { tripId, ...tripObject[tripId] } : null,
+        trip: tripId
+          ? {
+              ...tripObject[tripId],
+              confidence: VesselTripConfidence.CERTAIN,
+            }
+          : null,
+        potentialNextTrip: null,
         nmea2000: {
           lat,
           lng,
@@ -78,6 +86,12 @@ export const onRequest: Handler = async (context) => {
           navStatus: maybeSpeedKmph ? "UnderWayUsingEngine" : "Moored",
         },
       };
+      result.potentialNextTrip ||= guessVesselFromPreviousTrip(
+        result,
+        tripObject
+      );
+
+      return result;
     });
 
   const output: VesselPositionsFile = {

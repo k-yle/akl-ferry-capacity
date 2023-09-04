@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";
+import type { FerryRoute } from "../../types.def.ts";
 
 export const HomePage: React.FC = () => {
   const { routes } = useContext(DataContext);
   return (
     <>
       <Navbar title="Ferry Capacity" />
-      {Object.entries(routes || {}).map(([category, catRoutes]) => {
+      {Object.entries(routes || {}).map(([category, _catRoutes]) => {
+        const catRoutes = _catRoutes as Record<string, FerryRoute>;
         return (
           <Box
             key={category}
@@ -31,7 +33,12 @@ export const HomePage: React.FC = () => {
                     >
                       <Paper sx={{ p: 1, textAlign: "center" }}>
                         <Typography variant="h6" sx={{ color: "primary" }}>
-                          {route.name}
+                          {route.name
+                            .split("/")
+                            .flatMap((segment) => [
+                              segment,
+                              <br key={segment} />,
+                            ])}
                         </Typography>
                       </Paper>
                     </Link>

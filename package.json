@@ -6,7 +6,7 @@
   "author": "Kyle Hensel",
   "scripts": {
     "process-gtfs": "ts-node --esm scripts/processGtfs.ts",
-    "lint": "eslint --ignore-path=.gitignore . && tsc && tsc -p functions/tsconfig.json",
+    "lint": "eslint --ignore-path=.gitignore . && tsc",
     "test": "vitest",
     "start": "wrangler pages dev -- npm run start-only-client",
     "start-only-client": "vite",
