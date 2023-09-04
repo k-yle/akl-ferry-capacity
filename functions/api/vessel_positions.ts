@@ -10,6 +10,7 @@ import {
 import { API_HEADERS } from "../_helpers/constants.js";
 import { deriveCog } from "../_helpers/util/geo.js";
 import { guessVesselFromPreviousTrip } from "../_helpers/guesswork/guessVesselFromPreviousTrip.js";
+import { guessVesselFromPosition } from "../_helpers/guesswork/guessVesselFromPosition.js";
 
 /** cache data in memory for max 1min */
 const CACHE_MINUTES = 1;
@@ -86,6 +87,7 @@ export const onRequest: Handler = async (context) => {
           navStatus: maybeSpeedKmph ? "UnderWayUsingEngine" : "Moored",
         },
       };
+      result.trip ||= guessVesselFromPosition(result, tripObject);
       result.potentialNextTrip ||= guessVesselFromPreviousTrip(
         result,
         tripObject
