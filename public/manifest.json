@@ -3,7 +3,7 @@
   "name": "Ferry Capacity",
   "icons": [
     {
-      "src": "https://em-content.zobj.net/source/microsoft/319/ship_1f6a2.png",
+      "src": "/icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }

@@ -135,13 +135,13 @@ export const VesselPage: React.FC = () => {
           component="img"
           height="194"
           image={vessel.vessel.image}
-          alt="Paella dish"
+          alt={vessel.vessel.name}
         />
         <CardContent>
           <Typography variant="body2" color="text.secondary">
             <strong>Capacity:</strong>{" "}
-            {vessel.vessel.capacity.seats || vessel.vessel.capacity.pax}{" "}
-            passengers + {vessel.vessel.capacity.bike || <em>Unknown</em>} bikes
+            {vessel.vessel.capacity.seats || vessel.vessel.capacity.pax} seats +{" "}
+            {vessel.vessel.capacity.bike || <em>Unknown</em>} bikes
             {vessel.vessel.startDate && (
               <>
                 <br />

@@ -107,6 +107,24 @@ export const InfoModal: React.FC<{ onClose(): void }> = ({ onClose }) => {
             </a>
           </li>
         </ul>
+        <Typography variant="caption">
+          For software developers:{" "}
+          <a
+            href="/api/vessel_positions"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            API
+          </a>{" "}
+          |{" "}
+          <a
+            href="https://github.com/k-yle/akl-ferry-capacity"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            Source Code
+          </a>
+        </Typography>
       </Box>
     </Modal>
   );

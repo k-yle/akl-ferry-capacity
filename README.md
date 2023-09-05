@@ -22,6 +22,8 @@ flowchart TD
     Logos["Company Logos"] -->|via Facebook| Wikidata
 ```
 
+Our server consolidates this data into [a single API](https://ferry.kyle.kiwi/api/vessel_positions) which the app can use.
+
 # Contributing to the code
 
 If you just want to edit data about vessels, you can do that from [the Wikipedia page](https://en.wikipedia.org/wiki/List_of_Auckland_ferries).

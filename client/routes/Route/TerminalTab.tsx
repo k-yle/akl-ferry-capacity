@@ -139,7 +139,7 @@ export const VesselRow: React.FC<{
                 <br />
                 {liveVessel.vessel.capacity.seats ||
                   liveVessel.vessel.capacity.pax}{" "}
-                passengers + {liveVessel.vessel.capacity.bike} bikes
+                seats + {liveVessel.vessel.capacity.bike} bikes
               </>
             ) : (
               "Unknown Vessel"

@@ -102,5 +102,14 @@ export const onRequest: Handler = async (context) => {
 
   await context.env.DB.put("vesselPositions", JSON.stringify(output));
 
+  // @ts-expect-error -- intentional, we don't want to return this to the client
+  delete output.prevPositions;
+  for (const vessel of output.list) {
+    // @ts-expect-error -- intentional, we don't want to return this to the client
+    if (vessel.trip) delete vessel.trip.dates;
+    // @ts-expect-error -- intentional, we don't want to return this to the client
+    if (vessel.potentialNextTrip) delete vessel.potentialNextTrip.dates;
+  }
+
   return Response.json({ cached: false, ...output });
 };

@@ -59,5 +59,10 @@ export const onRequest: Handler = async (context) => {
 
   await context.env.DB.put("terminalLiveInfo", JSON.stringify(cache));
 
+  for (const trip of cache[stationId].departures) {
+    // @ts-expect-error -- intentional, we don't want to return this to the client
+    delete trip.dates;
+  }
+
   return Response.json({ cached: false, ...cache[stationId] });
 };
