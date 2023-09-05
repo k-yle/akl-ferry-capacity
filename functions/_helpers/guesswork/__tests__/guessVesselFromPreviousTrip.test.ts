@@ -10,7 +10,7 @@ import {
 } from "../../types.def.js";
 
 vi.mock("../../util/date.js", () => ({
-  TODAY: "2022-11-12",
+  getToday: () => "2022-11-12",
 }));
 
 const tripObjectFile = {

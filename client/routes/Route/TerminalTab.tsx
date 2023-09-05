@@ -72,9 +72,8 @@ export const renderNameAndConfidence = (
 
 export const VesselRow: React.FC<{
   dep: Departure;
-  liveVessel?: VesselOnRoute;
-  confidence?: VesselTripConfidence;
-}> = ({ dep, liveVessel, confidence }) => {
+  liveVessel?: [VesselOnRoute, VesselTripConfidence];
+}> = ({ dep, liveVessel: [liveVessel, confidence] = [] }) => {
   const navigate = useNavigate();
   return (
     <ListItem
@@ -234,23 +233,27 @@ export const TerminalTab: React.FC<{
         {allDepartures.length ? (
           allDepartures.map((departure, index) => {
             const liveVessel = vessels.list.find(
-              (v) =>
-                v.trip?.tripId === departure.tripId ||
-                v.potentialNextTrip?.tripId === departure.tripId
+              (v) => v.trip?.tripId === departure.tripId
             );
-            const confidence =
-              liveVessel?.trip?.tripId === departure.tripId
-                ? liveVessel.trip.confidence
-                : liveVessel?.potentialNextTrip?.tripId === departure.tripId
-                ? liveVessel.potentialNextTrip.confidence
-                : undefined;
+            const potentialLiveVessel = vessels.list.find(
+              (v) => v.potentialNextTrip?.tripId === departure.tripId
+            );
+
             return (
               <Fragment key={departure.tripId}>
                 {!!index && <Divider variant="inset" component="li" />}
                 <VesselRow
                   dep={departure}
-                  liveVessel={liveVessel}
-                  confidence={confidence}
+                  liveVessel={
+                    liveVessel
+                      ? [liveVessel, liveVessel.trip!.confidence]
+                      : potentialLiveVessel
+                      ? [
+                          potentialLiveVessel,
+                          potentialLiveVessel.potentialNextTrip!.confidence,
+                        ]
+                      : undefined
+                  }
                 />
               </Fragment>
             );

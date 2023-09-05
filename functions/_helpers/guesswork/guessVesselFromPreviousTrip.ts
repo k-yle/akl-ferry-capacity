@@ -4,7 +4,7 @@ import {
   VesselOnRoute,
   VesselTripConfidence,
 } from "../types.def.js";
-import { TODAY } from "../util/date.js";
+import { getToday } from "../util/date.js";
 
 /**
  * If a vessel has been sitting around for longer than this,
@@ -33,6 +33,8 @@ export function guessVesselFromPreviousTrip(
     lastTripEnd.time,
     MAX_MINUTES_BETWEEN_TRIPS
   );
+
+  const TODAY = getToday();
 
   /**
    * All trips for today that starts from where the current trip ends.
