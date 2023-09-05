@@ -45,7 +45,7 @@ export function guessVesselFromPreviousTrip(
         trip.dates.includes(TODAY) &&
         nextTripStart.stop === lastTripEnd.stop &&
         // gt/lt is safe bc the format is HH:mm:ss
-        nextTripStart.time > lastTripEnd.time &&
+        nextTripStart.time >= lastTripEnd.time &&
         nextTripStart.time < minutesAfterLastTripEnd
       );
     })

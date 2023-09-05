@@ -96,6 +96,14 @@ export const InfoModal: React.FC<{ onClose(): void }> = ({ onClose }) => {
               rel="noreferrer noopener"
             >
               OpenStreetMap
+            </a>{" "}
+            and{" "}
+            <a
+              href="https://linz.govt.nz/linz-copyright"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              LINZ
             </a>
           </li>
         </ul>

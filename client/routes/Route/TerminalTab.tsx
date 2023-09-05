@@ -34,7 +34,7 @@ const hhmm = (date: Date) => {
   ].join(":");
 };
 
-const renderNameAndConfidence = (
+export const renderNameAndConfidence = (
   name: string,
   confidence: VesselTripConfidence
 ) => {
