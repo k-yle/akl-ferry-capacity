@@ -59,7 +59,7 @@ export const MapPage: React.FC = () => {
             icon={svgBoat({
               cog: vessel.nmea2000.cog || undefined,
               loa: vessel.vessel.loa,
-              width: vessel.vessel.width,
+              beam: vessel.vessel.beam,
               heading: vessel.nmea2000.heading || undefined,
               zoom,
             })}

@@ -12,7 +12,7 @@ export type Vessel = {
   startDate?: string;
 
   loa?: number;
-  width?: number;
+  beam?: number;
   gt?: number;
 
   operators: {

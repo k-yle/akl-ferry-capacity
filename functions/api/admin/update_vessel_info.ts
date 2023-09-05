@@ -9,6 +9,7 @@ type WikidataAPI = {
       vesselLabel: { type: "literal"; value: string };
       image?: { type: "uri"; value: string };
       loa?: { type: "literal"; value: string };
+      beam?: { type: "literal"; value: string };
       capacity?: { type: "literal"; value: string };
       capacityMode?: { type: "uri"; value: string };
       operator?: { type: "uri"; value: string };
@@ -60,6 +61,7 @@ export const onRequest: Handler = async (context) => {
       vesselInfo[mmsi].image = row.image.value.replace("http://", "https://");
     }
     if (row.loa) vesselInfo[mmsi].loa = +row.loa.value;
+    if (row.beam) vesselInfo[mmsi].beam = +row.beam.value;
     if (row.startDate) vesselInfo[mmsi].startDate = row.startDate.value;
 
     // maybe save capacity

@@ -5,13 +5,13 @@ const [M, L] = "ML";
 // NOT a react component
 export const svgBoat = ({
   loa = 21,
-  width = loa / 3,
+  beam = loa / 3,
   heading,
   cog,
   zoom,
 }: {
   loa?: number;
-  width?: number;
+  beam?: number;
   heading?: number;
   cog?: number;
   zoom: number;
@@ -21,10 +21,10 @@ export const svgBoat = ({
   /* eslint-disable no-param-reassign -- temp hack */
   if (zoom < 11) {
     loa /= zoom / 4;
-    width /= zoom / 4;
+    beam /= zoom / 4;
   } else if (zoom < 13) {
     loa /= zoom / 8;
-    width /= zoom / 8;
+    beam /= zoom / 8;
   }
   /* eslint-enable no-param-reassign */
 
@@ -34,10 +34,10 @@ export const svgBoat = ({
 
     const path = [
       [M, 0, 0],
-      [L, loa * 0.1, width / 2],
-      [L, 0, width],
-      [L, loa * 0.6, width],
-      [L, loa, width / 2],
+      [L, loa * 0.1, beam / 2],
+      [L, 0, beam],
+      [L, loa * 0.6, beam],
+      [L, loa, beam / 2],
       [L, loa * 0.6, 0],
     ]
       .flat()
@@ -45,15 +45,15 @@ export const svgBoat = ({
 
     const arrowWidth = 0.75;
     const arrowPath = [
-      [M, 0, width / 2 - arrowWidth],
-      [L, loa + 5, width / 2 - arrowWidth],
-      [L, loa + 5, width / 2 - arrowWidth * 5],
-      [L, loa + 5 + arrowWidth * 5, width / 2],
-      [L, loa + 5 + arrowWidth * 5, width / 2],
-      [L, loa + 5, width / 2 + arrowWidth * 5],
-      [L, loa + 5, width / 2 + arrowWidth],
-      [L, 0, width / 2 + arrowWidth],
-      [L, 0, width / 2 - arrowWidth],
+      [M, 0, beam / 2 - arrowWidth],
+      [L, loa + 5, beam / 2 - arrowWidth],
+      [L, loa + 5, beam / 2 - arrowWidth * 5],
+      [L, loa + 5 + arrowWidth * 5, beam / 2],
+      [L, loa + 5 + arrowWidth * 5, beam / 2],
+      [L, loa + 5, beam / 2 + arrowWidth * 5],
+      [L, loa + 5, beam / 2 + arrowWidth],
+      [L, 0, beam / 2 + arrowWidth],
+      [L, 0, beam / 2 - arrowWidth],
     ]
       .flat()
       .join(" ");
@@ -61,7 +61,9 @@ export const svgBoat = ({
       <path
         fill="red"
         d="${path}"
-        style="transform: rotate(${angleToUse - 90}deg)"
+        style="transform: rotate(${
+          angleToUse - 90
+        }deg); transform-box: fill-box; transform-origin: center;"
       />
     `;
     if (isDrifting) {
@@ -69,17 +71,24 @@ export const svgBoat = ({
         <path
           fill="red"
           d="${arrowPath}"
-          style="transform: rotate(${cog - 90}deg)"
+          style="transform: translate(${loa / 2}px, 0) rotate(${
+            cog - 90
+          }deg); transform-box: fill-box; transform-origin: left;"
         />
       `;
     }
   } else {
     // if we don't have a heading, we can't render the boat shape.
     // so just render a circle.
-    svg = `<circle fill="red" r="${width / 2}" />`;
+    svg = `<circle fill="red" r="${beam / 2}" />`;
   }
 
   const [svgWidth, svgHeight] = [60, 60];
+
+  const trueCentre = {
+    x: svgWidth / 2 - (angleToUse ? loa / 2 : 0),
+    y: svgHeight / 2 - (angleToUse ? beam / 2 : 0),
+  };
 
   return divIcon({
     html: `
@@ -91,7 +100,7 @@ export const svgBoat = ({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       >
-      <g style="transform:translate(${svgWidth / 2}px, ${svgHeight / 2}px)">
+      <g style="transform:translate(${trueCentre.x}px, ${trueCentre.y}px)">
         ${svg}
       </g>
   </svg>`,
