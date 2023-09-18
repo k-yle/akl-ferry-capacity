@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TimeAgo from "react-timeago-i18n";
 import {
   Alert,
@@ -17,6 +17,7 @@ import {
 import { MoreVert } from "@mui/icons-material";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";
+import { CurrentTripForVessel } from "../../components/CurrentTripForVessel.tsx";
 
 export const VesselPage: React.FC = () => {
   const mmsi = +useParams().mmsi!;
@@ -149,18 +150,10 @@ export const VesselPage: React.FC = () => {
                 <TimeAgo date={vessel.vessel.startDate} />
               </>
             )}
-            <br />
-            {vessel.trip && (
-              <>
-                <strong>Current Route:</strong>{" "}
-                <Link to={`/routes/${vessel.trip?.rsn}`}>
-                  {vessel.trip?.destination}
-                </Link>
-              </>
-            )}
           </Typography>
         </CardContent>
       </Card>
+      <CurrentTripForVessel vessel={vessel} />
     </>
   );
 };
