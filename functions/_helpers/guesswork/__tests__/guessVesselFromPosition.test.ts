@@ -20,8 +20,8 @@ const tripObjectFile: TripObjectFile = {
     destination: "Half Moon Bay",
     operator: "Explore",
     stopTimes: [
-      { stop: "97001", time: "13:00:00", pier: "1" },
-      { stop: "96001", time: "13:45:00", pier: "5" },
+      { stop: "97001", time: "13:00:00", pier: "1", headsign: "" },
+      { stop: "96001", time: "13:45:00", pier: "5", headsign: "" },
     ],
   },
   t2: {
@@ -32,8 +32,8 @@ const tripObjectFile: TripObjectFile = {
     destination: "Half Moon Bay",
     operator: "Explore",
     stopTimes: [
-      { stop: "97001", time: "14:00:00", pier: "1" },
-      { stop: "96001", time: "14:45:00", pier: "5" },
+      { stop: "97001", time: "14:00:00", pier: "1", headsign: "" },
+      { stop: "96001", time: "14:45:00", pier: "5", headsign: "" },
     ],
   },
   t3: {
@@ -44,8 +44,8 @@ const tripObjectFile: TripObjectFile = {
     destination: "Half Moon Bay",
     operator: "Explore",
     stopTimes: [
-      { stop: "97001", time: "14:00:00", pier: "1" },
-      { stop: "96001", time: "14:45:00", pier: "5" },
+      { stop: "97001", time: "14:00:00", pier: "1", headsign: "" },
+      { stop: "96001", time: "14:45:00", pier: "5", headsign: "" },
     ],
   },
 };

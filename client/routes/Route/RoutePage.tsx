@@ -60,7 +60,7 @@ export const RoutePage: React.FC = () => {
           variant="fullWidth"
         >
           {route.stationIds.map((station) => (
-            <Tab key={station} label={terminals[station][0]} />
+            <Tab key={station} label={terminals[station][0]} tabIndex={0} />
           ))}
         </Tabs>
       </Navbar>

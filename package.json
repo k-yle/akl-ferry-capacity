@@ -51,7 +51,6 @@
   "eslintConfig": {
     "extends": "kyle",
     "rules": {
-      "jsx-a11y/anchor-is-valid": 0,
       "import/extensions": 0
     },
     "settings": {

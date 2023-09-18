@@ -67,10 +67,10 @@ export const guessVesselFromPosition = (
     return { ...nextTrip, confidence: VesselTripConfidence.LIKELY };
   }
 
-  // we found a vessel but not a matching trip...
+  // we found a journey but not a matching trip...
   return {
     destination: FERRY_TERMINALS[journey.to][0],
-    operator: vessel.vessel.operators[0].name,
+    operator: vessel.vessel.operators[0]?.name || "Unknown",
     rsn: journey.route,
     confidence: VesselTripConfidence.LIKELY,
 

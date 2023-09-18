@@ -15,6 +15,19 @@ import { guessVesselFromPosition } from "../_helpers/guesswork/guessVesselFromPo
 /** cache data in memory for max 1min */
 const CACHE_MINUTES = 1;
 
+function cleanResponse(output: VesselPositionsFile) {
+  // @ts-expect-error -- intentional, we don't want to return this to the client
+  // eslint-disable-next-line no-param-reassign
+  delete output.prevPositions;
+  for (const vessel of output.list) {
+    // @ts-expect-error -- intentional, we don't want to return this to the client
+    if (vessel.trip) delete vessel.trip.dates;
+    // @ts-expect-error -- intentional, we don't want to return this to the client
+    if (vessel.potentialNextTrip) delete vessel.potentialNextTrip.dates;
+  }
+  return output;
+}
+
 export const onRequest: Handler = async (context) => {
   const cache = await context.env.DB.get<VesselPositionsFile>(
     "vesselPositions",
@@ -23,7 +36,7 @@ export const onRequest: Handler = async (context) => {
 
   const now = Date.now();
   if (cache && (now - cache.lastUpdated) / 1000 / 60 < CACHE_MINUTES) {
-    return Response.json({ cached: true, ...cache });
+    return Response.json({ cached: true, ...cleanResponse(cache) });
   }
 
   const previousPositions = cache?.prevPositions || {};
@@ -104,14 +117,5 @@ export const onRequest: Handler = async (context) => {
 
   await context.env.DB.put("vesselPositions", JSON.stringify(output));
 
-  // @ts-expect-error -- intentional, we don't want to return this to the client
-  delete output.prevPositions;
-  for (const vessel of output.list) {
-    // @ts-expect-error -- intentional, we don't want to return this to the client
-    if (vessel.trip) delete vessel.trip.dates;
-    // @ts-expect-error -- intentional, we don't want to return this to the client
-    if (vessel.potentialNextTrip) delete vessel.potentialNextTrip.dates;
-  }
-
-  return Response.json({ cached: false, ...output });
+  return Response.json({ cached: false, ...cleanResponse(output) });
 };

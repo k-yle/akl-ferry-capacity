@@ -13,19 +13,19 @@ import {
   Typography,
 } from "@mui/material";
 import { DirectionsBoat } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 import TimeAgo from "react-timeago-i18n";
 import { DataContext } from "../../context/DataContext.tsx";
 import { useTerminalInfo } from "../../hooks/useTerminalInfo.ts";
 import {
   VesselTripConfidence,
   type Departure,
-  type FERRY_TERMINALS,
   type VesselOnRoute,
+  type StationId,
 } from "../../types.def.ts";
+import { MuiLink } from "../../components/MuiLink.tsx";
 
 /** services that departed longer than this ago will be hidden */
-const MAX_OLD_MINUTES = 10;
+const MAX_OLD_MINUTES = 60;
 
 const hhmm = (date: Date) => {
   return [
@@ -74,7 +74,6 @@ export const VesselRow: React.FC<{
   dep: Departure;
   liveVessel?: [VesselOnRoute, VesselTripConfidence];
 }> = ({ dep, liveVessel: [liveVessel, confidence] = [] }) => {
-  const navigate = useNavigate();
   return (
     <ListItem
       alignItems="flex-start"
@@ -91,16 +90,14 @@ export const VesselRow: React.FC<{
       }
       style={{
         background: dep.cancelled ? "#f3e0ff" : undefined,
-        cursor: liveVessel ? "pointer" : undefined,
+        color: "inherit",
       }}
-      onClick={
-        liveVessel
-          ? () => navigate(`/vessels/${liveVessel.vessel.mmsi}`)
-          : undefined
-      }
+      // @ts-expect-error -- this works, MUI is stupid
+      href={liveVessel ? `/vessels/${liveVessel.vessel.mmsi}` : undefined}
+      component={liveVessel ? MuiLink : undefined}
     >
       <ListItemAvatar>
-        {liveVessel ? (
+        {liveVessel?.vessel.image ? (
           <img
             // the width option tells commons to load a thumbnail
             src={`${liveVessel.vessel.image}?width=150`}
@@ -138,7 +135,8 @@ export const VesselRow: React.FC<{
                 <br />
                 {liveVessel.vessel.capacity.seats ||
                   liveVessel.vessel.capacity.pax}{" "}
-                seats + {liveVessel.vessel.capacity.bike} bikes
+                seats + {liveVessel.vessel.capacity.bike ?? <em>Unknown</em>}{" "}
+                bikes
               </>
             ) : (
               "Unknown Vessel"
@@ -151,14 +149,11 @@ export const VesselRow: React.FC<{
 };
 
 export const TerminalTab: React.FC<{
-  stationId: keyof typeof FERRY_TERMINALS;
+  stationId: StationId;
   rsn: string;
 }> = ({ stationId, rsn }) => {
   const { vessels, error } = useContext(DataContext);
   const [terminalInfo, error2] = useTerminalInfo(stationId);
-
-  console.log("terminalInfo", terminalInfo);
-  console.log("vessels", vessels);
 
   if (!terminalInfo || !vessels) return <CircularProgress />;
 
@@ -177,6 +172,8 @@ export const TerminalTab: React.FC<{
   const allDepartures: Departure[] = [
     ...activeMissingDepartures.flatMap((vessel) => {
       const trip = vessel.trip!;
+      // this assumes that a stop only occurs once in a trip, which
+      // is currently a safe assumption.
       const stopTime = trip.stopTimes.find((time) => +time.stop === stationId);
       if (!stopTime) return [];
 
@@ -203,7 +200,7 @@ export const TerminalTab: React.FC<{
         // consturct a fake departure with all the facts we know
         cancelled: false,
         operator: vessel.vessel.operators[0].name,
-        destinationLive: trip.destination.split(" To ")[1],
+        destinationLive: stopTime.headsign,
         destination: trip.destination,
         tripId: vessel.trip!.tripId,
         rsn,

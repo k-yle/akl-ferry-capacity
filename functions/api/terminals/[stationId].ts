@@ -10,6 +10,14 @@ import type {
 /** cache data in memory for max 10mins */
 const CACHE_MINUTES = 10;
 
+function cleanResponse(terminal: TerminalLiveInfo) {
+  for (const trip of terminal.departures) {
+    // @ts-expect-error -- intentional, we don't want to return this to the client
+    delete trip.dates;
+  }
+  return terminal;
+}
+
 export const onRequest: Handler = async (context) => {
   const cache =
     (await context.env.DB.get<{
@@ -21,7 +29,7 @@ export const onRequest: Handler = async (context) => {
     cache[stationId] &&
     (Date.now() - cache[stationId].lastUpdated) / 1000 / 60 < CACHE_MINUTES
   ) {
-    return Response.json({ cached: true, ...cache[stationId] });
+    return Response.json({ cached: true, ...cleanResponse(cache[stationId]) });
   }
 
   const atMovements: AT.StationAPIResponse = await fetch(
@@ -59,10 +67,5 @@ export const onRequest: Handler = async (context) => {
 
   await context.env.DB.put("terminalLiveInfo", JSON.stringify(cache));
 
-  for (const trip of cache[stationId].departures) {
-    // @ts-expect-error -- intentional, we don't want to return this to the client
-    delete trip.dates;
-  }
-
-  return Response.json({ cached: false, ...cache[stationId] });
+  return Response.json({ cached: false, ...cleanResponse(cache[stationId]) });
 };

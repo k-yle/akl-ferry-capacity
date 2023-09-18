@@ -1,5 +1,6 @@
 import { FERRY_TERMINALS } from "../constants.js";
 import {
+  StationId,
   TripObjectFile,
   VesselOnRoute,
   VesselTripConfidence,
@@ -29,6 +30,7 @@ export function guessVesselFromPreviousTrip(
   if (!lastTrip) return null;
 
   const lastTripEnd = lastTrip.stopTimes.at(-1)!;
+  if (!lastTripEnd) return null;
   const minutesAfterLastTripEnd = getInNMinutes(
     lastTripEnd.time,
     MAX_MINUTES_BETWEEN_TRIPS
@@ -59,8 +61,7 @@ export function guessVesselFromPreviousTrip(
   // we couldn't find the next trip
   if (!outboundTrip) return null;
 
-  const hasLayoverSpace =
-    FERRY_TERMINALS[+lastTripEnd.stop as keyof typeof FERRY_TERMINALS][3];
+  const hasLayoverSpace = FERRY_TERMINALS[+lastTripEnd.stop as StationId][3];
 
   return {
     ...outboundTrip,

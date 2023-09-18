@@ -119,6 +119,7 @@ export async function fetchTimetables() {
             stop: station.stop_code!,
             pier: stop.platform_code,
             time: (stopTime.departure_time || stopTime.arrival_time)!,
+            headsign: stopTime.stop_headsign!,
           };
         });
 

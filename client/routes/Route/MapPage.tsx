@@ -11,15 +11,15 @@ import {
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";
 import { svgBoat } from "../../components/svgBoat.tsx";
+import { RenderTripName } from "../../components/RenderTripName.tsx";
 
 import "leaflet/dist/leaflet.css";
-import { renderNameAndConfidence } from "./TerminalTab.tsx";
 
 const CENTRE = [-36.83568, 174.77688] as [number, number];
 const DEFAULT_ZOOM = 15;
 
 export const MapPage: React.FC = () => {
-  const { vessels, terminals } = useContext(DataContext);
+  const { vessels } = useContext(DataContext);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
   const onMapReady = useCallback((map: Map) => {
@@ -71,19 +71,7 @@ export const MapPage: React.FC = () => {
                 </Link>
               </strong>{" "}
               {vessel.trip ? (
-                <>
-                  {renderNameAndConfidence("", vessel.trip.confidence)}{" "}
-                  operating the{" "}
-                  {vessel.trip.stopTimes[0].time.replace(/:\d\d$/, "")}{" "}
-                  <Link to={`/routes/${vessel.trip.rsn}`}>
-                    {terminals?.[+vessel.trip.stopTimes[0].stop as never][0]} to{" "}
-                    {
-                      terminals?.[
-                        +vessel.trip.stopTimes.at(-1)!.stop as never
-                      ][0]
-                    }
-                  </Link>
-                </>
+                <RenderTripName trip={vessel.trip} />
               ) : (
                 "(Out of Service)"
               )}

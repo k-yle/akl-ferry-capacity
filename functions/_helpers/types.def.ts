@@ -46,6 +46,7 @@ export type TripObject = {
     stop: string;
     pier: string | undefined;
     time: string;
+    headsign: string;
   }[];
 };
 export type TripObjectFile = { [tripId: string]: TripObject };
@@ -57,10 +58,11 @@ export type FerryTerminal = [
   /** true if there are multiple berths that are often used interchangably */
   hasLayoverSpace?: boolean,
 ];
+export type StationId = keyof typeof FERRY_TERMINALS;
 export type FerryRoute = {
   name: string;
   shortName: string;
-  stationIds: (keyof typeof FERRY_TERMINALS)[];
+  stationIds: StationId[];
 };
 
 export type Departure = TripObject & {
