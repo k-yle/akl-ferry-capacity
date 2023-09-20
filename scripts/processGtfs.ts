@@ -154,7 +154,7 @@ export async function fetchTimetables() {
   if (!dryRun) {
     console.log("Uploading result to server...");
     const response = await fetch(
-      "https://ferry.kyle.kiwi/api/admin/update_timetables",
+      "https://akl.boats/api/admin/update_timetables",
       {
         method: "POST",
         body: JSON.stringify(tripObject),
