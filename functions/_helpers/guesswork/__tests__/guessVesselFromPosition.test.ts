@@ -85,7 +85,7 @@ describe("guessVesselFromPosition", () => {
       )
     ).toStrictEqual({
       rsn: "DEV",
-      destination: "Devonport",
+      destination: "Downtown",
       operator: "Union Steam Ship Co",
 
       confidence: VesselTripConfidence.LIKELY,
