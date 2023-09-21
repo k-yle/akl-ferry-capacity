@@ -37,7 +37,7 @@
       "type": "Feature",
       "properties": {
         "name": "Downtown Pier 2",
-        "options": [{ "route": "DEV", "to": 96701 }]
+        "options": [{ "route": "DEV", "to": 96001 }]
       },
       "geometry": {
         "type": "Polygon",
@@ -57,11 +57,9 @@
       "properties": {
         "name": "Downtown Pier 1",
         "options": [
-          { "route": "BAYS", "to": 96401 },
-          { "route": "BIRK", "to": 96401 },
-          { "route": "BIRK", "to": 96601 },
-          { "route": "BIRK", "to": 97301 },
-          { "route": "HMB", "to": 97001 }
+          { "route": "BAYS", "to": 96001 },
+          { "route": "BIRK", "to": 96001 },
+          { "route": "HMB", "to": 96001 }
         ]
       },
       "geometry": {
@@ -81,7 +79,7 @@
       "type": "Feature",
       "properties": {
         "name": "Downtown Pier 3",
-        "options": [{ "route": "PINE", "to": 97401 }]
+        "options": [{ "route": "PINE", "to": 96001 }]
       },
       "geometry": {
         "type": "Polygon",
@@ -100,7 +98,7 @@
       "type": "Feature",
       "properties": {
         "name": "Downtown Pier 5",
-        "options": [{ "route": "HMB", "to": 97001 }]
+        "options": [{ "route": "HMB", "to": 96001 }]
       },
       "geometry": {
         "type": "Polygon",
@@ -119,7 +117,7 @@
       "type": "Feature",
       "properties": {
         "name": "Downtown Pier 6",
-        "options": [{ "route": "WSTH", "to": 98101 }]
+        "options": [{ "route": "WSTH", "to": 96001 }]
       },
       "geometry": {
         "type": "Polygon",
@@ -138,10 +136,7 @@
       "type": "Feature",
       "properties": {
         "name": "Downtown Pier 7",
-        "options": [
-          { "route": "HOBS", "to": 21779 },
-          { "route": "HOBS", "to": 41220 }
-        ]
+        "options": [{ "route": "HOBS", "to": 96001 }]
       },
       "geometry": {
         "type": "Polygon",
@@ -160,7 +155,7 @@
       "type": "Feature",
       "properties": {
         "name": "Downtown Pier 8",
-        "options": [{ "route": "GULF", "to": 96901 }]
+        "options": [{ "route": "GULF", "to": 96001 }]
       },
       "geometry": {
         "type": "Polygon",
@@ -179,7 +174,7 @@
       "type": "Feature",
       "properties": {
         "name": "Downtown Pier 11/12",
-        "options": [{ "route": "MTIA", "to": 61000 }]
+        "options": [{ "route": "MTIA", "to": 96001 }]
       },
       "geometry": {
         "type": "Polygon",
