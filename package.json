@@ -8,7 +8,7 @@
     "process-gtfs": "ts-node --esm scripts/processGtfs.ts",
     "lint": "eslint --ignore-path=.gitignore . && tsc",
     "test": "vitest",
-    "start": "wrangler pages dev -- npm run start-only-client",
+    "start": "wrangler pages dev --proxy 5120 -- npm run start-only-client",
     "start-only-client": "vite",
     "build": "vite build"
   },

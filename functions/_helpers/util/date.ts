@@ -18,3 +18,12 @@ export const getNow = () =>
     timeZone: "Pacific/Auckland",
     timeStyle: "medium",
   }).format(new Date());
+
+/**
+ * GTFS allows hours >24, so we fix this
+ */
+export const normaliseGtfsTime = (hhmmss: string) => {
+  const [hh, mm, ss] = hhmmss.split(":");
+  const normalisedHour = `${+hh % 24}`.padStart(2, "0");
+  return `${normalisedHour}:${mm}:${ss}`;
+};

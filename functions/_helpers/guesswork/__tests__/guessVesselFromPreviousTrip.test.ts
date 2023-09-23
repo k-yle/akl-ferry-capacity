@@ -9,7 +9,9 @@ import {
   type VesselOnRoute,
 } from "../../types.def.js";
 
-vi.mock("../../util/date.js", () => ({
+vi.mock("../../util/date.js", async () => ({
+  // @ts-expect-error -- see Microsoft/TypeScript#10727
+  ...(await vi.importActual("../../util/date.js")),
   getToday: () => "2022-11-12",
 }));
 
