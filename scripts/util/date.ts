@@ -58,7 +58,7 @@ export const getDatesForTrip = (
 
   for (const exception of exceptions) {
     const isoDate = parseGTFSDate(exception.date).split("T")[0];
-    if (exception.exception_type === ExceptionType.SERVICE_ADDED) {
+    if (+exception.exception_type === ExceptionType.SERVICE_ADDED) {
       // added services
       dates.push(isoDate);
     } else {
