@@ -5,22 +5,13 @@ import {
   VesselOnRoute,
   VesselTripConfidence,
 } from "../types.def.js";
-import { getToday, normaliseGtfsTime } from "../util/date.js";
+import { getInNMinutes, getToday } from "../util/date.js";
 
 /**
  * If a vessel has been sitting around for longer than this,
  * then it's unlikely to still be on the same route.
  */
 const MAX_MINUTES_BETWEEN_TRIPS = 29;
-
-/** Given a `hh:mm:ss` time, it adds/substracts the given
- * number of minutes, returns a `hh:mm:ss` time.
- */
-export const getInNMinutes = (hhmmss: string, minuteOffset: number) => {
-  const date = new Date(`1970-01-01T${normaliseGtfsTime(hhmmss)}Z`);
-  date.setUTCMinutes(date.getUTCMinutes() + minuteOffset);
-  return date.toISOString().split("T")[1].split(".")[0];
-};
 
 export function guessVesselFromPreviousTrip(
   vessel: VesselOnRoute,

@@ -183,6 +183,7 @@ export const TerminalTab: React.FC<{
       // true if the this stop is the last stop of the trip.
       // in that case, there's no use showing it
       const isLastStop =
+        trip.stopTimes.length > 1 &&
         trip.stopTimes.indexOf(stopTime) === trip.stopTimes.length - 1;
 
       if (isLastStop) return [];

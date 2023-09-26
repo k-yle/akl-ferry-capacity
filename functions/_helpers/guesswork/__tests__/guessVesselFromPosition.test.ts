@@ -92,7 +92,14 @@ describe("guessVesselFromPosition", () => {
 
       confidence: VesselTripConfidence.LIKELY,
       tripId: "",
-      stopTimes: [],
+      stopTimes: [
+        {
+          headsign: "Downtown",
+          pier: undefined,
+          stop: "96001",
+          time: "00:00:09",
+        },
+      ],
       dates: [],
     });
   });
@@ -131,7 +138,14 @@ describe("guessVesselFromPosition", () => {
 
       confidence: VesselTripConfidence.LIKELY,
       tripId: "",
-      stopTimes: [],
+      stopTimes: [
+        {
+          headsign: "Downtown",
+          pier: undefined,
+          stop: "96001",
+          time: "00:00:09",
+        },
+      ],
       dates: [],
     });
   });
@@ -144,4 +158,44 @@ describe("guessVesselFromPosition", () => {
       )
     ).toBeNull();
   });
+
+  it.each`
+    hour  | tripId
+    ${14} | ${"t3"}
+    ${15} | ${"t3"}
+    ${16} | ${""}
+    ${21} | ${""}
+  `(
+    "does not return a tripId if the next trip is too far in the future %#",
+    ({ hour, tripId }) => {
+      expect(
+        guessVesselFromPosition(
+          createVessel({
+            lat: -36.84773845645748,
+            lng: 174.88265547186995,
+            cog: 100,
+          }),
+          {
+            t3: {
+              ...tripObjectFile.t3,
+              stopTimes: [
+                {
+                  stop: "97001",
+                  time: `${hour}:00:00`,
+                  pier: "1",
+                  headsign: "",
+                },
+                {
+                  stop: "96001",
+                  time: `${hour}:45:00`,
+                  pier: "5",
+                  headsign: "",
+                },
+              ],
+            },
+          }
+        )?.tripId
+      ).toBe(tripId);
+    }
+  );
 });

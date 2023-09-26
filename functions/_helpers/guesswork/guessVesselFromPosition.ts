@@ -6,7 +6,7 @@ import {
   type VesselOnRoute,
   type TripObjectFile,
 } from "../types.def.js";
-import { getNow, getToday } from "../util/date.js";
+import { getInNMinutes, getNow, getToday } from "../util/date.js";
 
 const query = whichPolygon(harbourZones);
 
@@ -49,6 +49,7 @@ export const guessVesselFromPosition = (
 
   const TODAY = getToday();
   const NOW = getNow();
+  const in2Hours = getInNMinutes(NOW, 2 * 60);
 
   const nextTrip = Object.values(tripObjectFile)
     .filter(
@@ -56,6 +57,7 @@ export const guessVesselFromPosition = (
         trip.rsn === journey.route && // trip is on the correct route
         trip.dates.includes(TODAY) && // trip applies today
         +trip.stopTimes[0].stop === journey.to && // trip departs from where this journey ends
+        trip.stopTimes[0].time < in2Hours && // trip leaves within the next 2 hours
         trip.stopTimes[0].time > NOW // trip occurs later in the day than right now.
     )
     .sort((a, b) =>
@@ -68,15 +70,24 @@ export const guessVesselFromPosition = (
   }
 
   // we found a journey but not a matching trip...
+  const destination = FERRY_TERMINALS[journey.to][0];
   return {
-    destination: FERRY_TERMINALS[journey.to][0],
+    destination,
     operator: vessel.vessel.operators[0]?.name || "Unknown",
     rsn: journey.route,
     confidence: VesselTripConfidence.LIKELY,
 
     // TODO: this will probably break something, might be better to return nothing
     dates: [],
-    stopTimes: [],
+    stopTimes: [
+      // only add a single stop.
+      {
+        headsign: destination,
+        pier: undefined,
+        stop: `${journey.to}`,
+        time: "00:00:09",
+      },
+    ],
     tripId: "",
   };
 };
