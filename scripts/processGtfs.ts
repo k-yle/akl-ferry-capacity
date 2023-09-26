@@ -33,6 +33,7 @@ const execAsync = promisify(exec);
 export async function fetchTimetables() {
   /** if true, network requests are skipped */
   const dryRun = process.argv.includes("--dry");
+  const developmentApi = process.argv.includes("--dev");
 
   const token = process.env.UPLOAD_TOKEN;
   if (!token) throw new Error("No UPLOAD_TOKEN configured");
@@ -153,18 +154,28 @@ export async function fetchTimetables() {
   //
   if (!dryRun) {
     console.log("Uploading result to server...");
-    const response = await fetch(
-      "https://akl.boats/api/admin/update_timetables",
-      {
-        method: "POST",
-        body: JSON.stringify(tripObject),
-        headers: { Authentication: token },
-      }
-    ).then((r) => r.json());
+    const API_URL = developmentApi
+      ? "http://127.0.0.1:8788"
+      : "https://akl.boats";
+
+    const response = await fetch(`${API_URL}/api/admin/update_timetables`, {
+      method: "POST",
+      body: JSON.stringify(tripObject),
+      headers: { Authentication: token },
+    }).then((r) => r.json());
 
     if (typeof response === "object" && response && "error" in response) {
       throw new Error(`${response.error}`);
     }
+
+    //
+    // 7. Update the list of vessels
+    //
+    console.log("Updating vessel list...");
+    const response2 = await fetch(
+      `${API_URL}/api/admin/update_vessel_info?authentication=${token}`
+    ).then((r) => r.text());
+    if (response2 !== "OK") throw new Error(response2);
   }
 
   console.log("Done!");

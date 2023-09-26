@@ -4,6 +4,7 @@
     "target": "esnext",
     "module": "esnext",
     "lib": ["esnext"],
+    "skipLibCheck": true,
     "noEmit": true,
     "moduleResolution": "Node16",
     "types": ["@cloudflare/workers-types"]

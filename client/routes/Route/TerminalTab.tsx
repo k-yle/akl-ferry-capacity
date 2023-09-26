@@ -110,10 +110,12 @@ export const VesselRow: React.FC<{
           </Avatar>
         )}
       </ListItemAvatar>
+
       <ListItemText
+        disableTypography
         primary={<>To {dep.destinationLive}</>}
         secondary={
-          <>
+          <Typography component="div" variant="body2">
             {!!dep.pier && (
               <>
                 <Typography
@@ -141,7 +143,7 @@ export const VesselRow: React.FC<{
             ) : (
               "Unknown Vessel"
             )}
-          </>
+          </Typography>
         }
       />
     </ListItem>
