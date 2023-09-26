@@ -3,7 +3,7 @@ import { useParams, Navigate } from "react-router-dom";
 import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";
-import type { FerryRoute } from "../../types.def.ts";
+import type { FerryRoute, Rsn } from "../../types.def.ts";
 import { TerminalTab } from "./TerminalTab.tsx";
 
 const TabPanel: React.FC<{ visible: boolean } & React.PropsWithChildren> = ({
@@ -19,7 +19,7 @@ const TabPanel: React.FC<{ visible: boolean } & React.PropsWithChildren> = ({
 
 export const RoutePage: React.FC = () => {
   const { routes, terminals } = useContext(DataContext);
-  const rsn = useParams().rsn!;
+  const rsn = useParams<{ rsn: Rsn }>().rsn!;
 
   const [tabIndex, setTabIndex] = useState<number | undefined>(undefined);
 

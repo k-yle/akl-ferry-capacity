@@ -1,4 +1,4 @@
-import type { FERRY_TERMINALS } from "./constants.js";
+import type { FERRY_ROUTES, FERRY_TERMINALS } from "./constants.js";
 
 export type Coord = { lat: number; lng: number };
 export type DatedCoord = Coord & { date: number };
@@ -37,7 +37,7 @@ export type VesselInfo = {
 /** merged the interested details from agency.txt, routes.txt, and trips.txt */
 export type TripObject = {
   tripId: string;
-  rsn: string;
+  rsn: Rsn;
   operator: string;
   destination: string;
   /** ISO Dates */
@@ -58,7 +58,11 @@ export type FerryTerminal = [
   /** true if there are multiple berths that are often used interchangably */
   hasLayoverSpace?: boolean,
 ];
+
+type KeyOfUnion<T> = T extends T ? keyof T : never;
+export type Rsn = KeyOfUnion<(typeof FERRY_ROUTES)[keyof typeof FERRY_ROUTES]>;
 export type StationId = keyof typeof FERRY_TERMINALS;
+
 export type FerryRoute = {
   name: string;
   shortName: string;

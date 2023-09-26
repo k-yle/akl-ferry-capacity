@@ -15,7 +15,7 @@ import {
 } from "gtfs-types";
 import { Extract } from "unzip-stream";
 import { config as dotenv } from "dotenv";
-import type { TripObjectFile } from "../functions/_helpers/types.def.js";
+import type { Rsn, TripObjectFile } from "../functions/_helpers/types.def.js";
 import { csvToJsonObject } from "./util/csvToJsonObject.js";
 import { getDatesForTrip } from "./util/date.ts";
 
@@ -131,7 +131,7 @@ export async function fetchTimetables() {
 
       tripObject[tripId] = {
         tripId,
-        rsn: route.route_short_name!,
+        rsn: route.route_short_name as Rsn,
         operator: agency,
         destination: trip.trip_headsign || "Unknown",
         dates,

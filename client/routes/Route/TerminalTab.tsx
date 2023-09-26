@@ -21,6 +21,7 @@ import {
   type Departure,
   type VesselOnRoute,
   type StationId,
+  type Rsn,
 } from "../../types.def.ts";
 import { MuiLink } from "../../components/MuiLink.tsx";
 
@@ -152,7 +153,7 @@ export const VesselRow: React.FC<{
 
 export const TerminalTab: React.FC<{
   stationId: StationId;
-  rsn: string;
+  rsn: Rsn;
 }> = ({ stationId, rsn }) => {
   const { vessels, error } = useContext(DataContext);
   const [terminalInfo, error2] = useTerminalInfo(stationId);
@@ -168,7 +169,7 @@ export const TerminalTab: React.FC<{
   );
   const knownTripIds = new Set(knownDepartures.map((d) => d.tripId));
   const activeMissingDepartures = vessels.list.filter(
-    (v) => v.trip?.rsn === rsn && !knownTripIds.has(v.trip.tripId)
+    (v) => v.trip && v.trip?.rsn === rsn && !knownTripIds.has(v.trip.tripId)
   );
 
   const allDepartures: Departure[] = [

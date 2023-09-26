@@ -7,8 +7,8 @@ declare module "*.geo.json" {
   export type HarbourZone = {
     name?: string;
     options?: {
-      route: string;
-      to: keyof typeof import("./constants.js").FERRY_TERMINALS;
+      route: import("./types.def.js").Rsn;
+      to: import("./types.def.js").StationId;
       angleRange?: { min: number; max: number };
     }[];
   };
