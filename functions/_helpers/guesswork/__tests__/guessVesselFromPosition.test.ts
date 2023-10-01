@@ -50,6 +50,30 @@ const tripObjectFile: TripObjectFile = {
       { stop: "96001", time: "14:45:00", pier: "5", headsign: "" },
     ],
   },
+  t4: {
+    // this one is plausible (for a vessel standing by at Pier 1 downtown)
+    tripId: "t4",
+    rsn: "BIRK",
+    dates: ["2022-11-12"],
+    destination: "Birkenhead",
+    operator: "Explore",
+    stopTimes: [
+      { stop: "96001", time: "14:45:00", pier: "1", headsign: "" },
+      { stop: "96601", time: "14:55:00", pier: "1", headsign: "" },
+    ],
+  },
+  t5: {
+    // same as t4, but departs earlier
+    tripId: "t5",
+    rsn: "BAYS",
+    dates: ["2022-11-12"],
+    destination: "Bayswater",
+    operator: "Explore",
+    stopTimes: [
+      { stop: "96001", time: "14:00:00", pier: "1", headsign: "" },
+      { stop: "96401", time: "14:10:00", pier: "1", headsign: "" },
+    ],
+  },
 };
 
 const createVessel = ({
@@ -150,13 +174,18 @@ describe("guessVesselFromPosition", () => {
     });
   });
 
-  it("returns null if there are multiple possible trips", () => {
+  it("returns the most appropriate trip if there are multiple possible", () => {
     expect(
       guessVesselFromPosition(
         createVessel({ lat: -36.84279728384385, lng: 174.76699809406733 }),
         tripObjectFile
       )
-    ).toBeNull();
+    ).toStrictEqual({
+      // both t4 and t5 are plausible, but it picked
+      // t5 since it's earlier
+      ...tripObjectFile.t5,
+      confidence: VesselTripConfidence.LIKELY,
+    });
   });
 
   it.each`

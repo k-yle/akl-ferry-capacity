@@ -35,30 +35,20 @@ export const guessVesselFromPosition = (
 
   if (!validJourneys.length) return null;
 
-  const differentRoutes = new Set(
-    validJourneys.map((journey) => journey.route)
-  );
-  if (differentRoutes.size > 1) {
-    // multiple possible routes, so we can't make a safe guess
-    return null;
-  }
-
-  // there could be multiple validJourneys, but they're all from
-  // the same route, so just pick the first one.
-  const journey = validJourneys[0];
-
   const TODAY = getToday();
   const NOW = getNow();
   const in2Hours = getInNMinutes(NOW, 2 * 60);
 
   const nextTrip = Object.values(tripObjectFile)
-    .filter(
-      (trip) =>
-        trip.rsn === journey.route && // trip is on the correct route
-        trip.dates.includes(TODAY) && // trip applies today
-        +trip.stopTimes[0].stop === journey.to && // trip departs from where this journey ends
-        trip.stopTimes[0].time < in2Hours && // trip leaves within the next 2 hours
-        trip.stopTimes[0].time > NOW // trip occurs later in the day than right now.
+    .filter((trip) =>
+      validJourneys.some(
+        (journey) =>
+          trip.rsn === journey.route && // trip is on the correct route
+          trip.dates.includes(TODAY) && // trip applies today
+          +trip.stopTimes[0].stop === journey.to && // trip departs from where this journey ends
+          trip.stopTimes[0].time < in2Hours && // trip leaves within the next 2 hours
+          trip.stopTimes[0].time > NOW // trip occurs later in the day than right now.
+      )
     )
     .sort((a, b) =>
       // we can safely compare the time as a string, because they are formatted as HH:mm:ss
@@ -70,6 +60,9 @@ export const guessVesselFromPosition = (
   }
 
   // we found a journey but not a matching trip...
+  // so pick the first potential journey (if multiple).
+  const journey = validJourneys[0];
+
   const destination = FERRY_TERMINALS[journey.to][0];
   return {
     destination,

@@ -13,7 +13,7 @@ export const RenderTripName: React.FC<{ trip: TripWithConfidence }> = ({
   const tripStart = +trip.stopTimes[0].stop as StationId;
   const tripEnd = +trip.stopTimes.at(-1)!.stop as StationId;
 
-  const tripStartTime = trip.stopTimes.at(-1)!.time;
+  const tripStartTime = trip.stopTimes[0].time;
 
   // if the current trip finished more than 30 minutes ago,
   // that means the crew just forget to turn off the transponder.

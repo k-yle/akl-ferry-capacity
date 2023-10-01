@@ -58,8 +58,7 @@
         "name": "Downtown Pier 1",
         "options": [
           { "route": "BAYS", "to": 96001 },
-          { "route": "BIRK", "to": 96001 },
-          { "route": "HMB", "to": 96001 }
+          { "route": "BIRK", "to": 96001 }
         ]
       },
       "geometry": {
@@ -311,12 +310,12 @@
         "options": [
           {
             "angleRange": { "min": 181, "max": 359 },
-            "route": "HOBS",
-            "to": 21779
+            "route": "WSTH",
+            "to": 98101
           },
           {
             "angleRange": { "min": 0, "max": 180 },
-            "route": "HOBS",
+            "route": "WSTH",
             "to": 96001
           }
         ]
@@ -488,8 +487,16 @@
       "properties": {
         "name": "Tāmaki Strait",
         "options": [
-          { "route": "CORO", "to": 97505 },
-          { "route": "CORO", "to": 96001 }
+          {
+            "angleRange": { "min": 0, "max": 180 },
+            "route": "CORO",
+            "to": 97505
+          },
+          {
+            "angleRange": { "min": 181, "max": 359 },
+            "route": "CORO",
+            "to": 96001
+          }
         ]
       },
       "geometry": {
@@ -531,7 +538,7 @@
       "type": "Feature",
       "properties": {
         "name": "Downtown Pier 13",
-        "options": [{ "route": "RANG", "to": 61089 }]
+        "options": []
       },
       "geometry": {
         "type": "Polygon",
