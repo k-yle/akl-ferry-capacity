@@ -24,16 +24,11 @@ import {
   type Rsn,
 } from "../../types.def.ts";
 import { MuiLink } from "../../components/MuiLink.tsx";
+import { useCruiseShips } from "../../hooks/useCruiseShips.ts";
+import { getHHMM as hhmm } from "../../helpers/date.ts";
 
 /** services that departed longer than this ago will be hidden */
 const MAX_OLD_MINUTES = 60;
-
-const hhmm = (date: Date) => {
-  return [
-    `${date.getHours()}`.padStart(2, "0"),
-    `${date.getMinutes()}`.padStart(2, "0"),
-  ].join(":");
-};
 
 export const renderNameAndConfidence = (
   name: string,
@@ -157,6 +152,7 @@ export const TerminalTab: React.FC<{
 }> = ({ stationId, rsn }) => {
   const { vessels, error } = useContext(DataContext);
   const [terminalInfo, error2] = useTerminalInfo(stationId);
+  const cruiseShipWarnings = useCruiseShips();
 
   if (!terminalInfo || !vessels) return <CircularProgress />;
 
@@ -227,6 +223,11 @@ export const TerminalTab: React.FC<{
             severity={alert.priority === "high" ? "warning" : "info"}
           >
             {alert.text}
+          </Alert>
+        ))}
+        {cruiseShipWarnings.map((alert) => (
+          <Alert key={alert.message} severity={alert.severity}>
+            {alert.message}
           </Alert>
         ))}
       </Box>

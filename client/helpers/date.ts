@@ -11,5 +11,9 @@ export const getInNMinutes = (minutes: number) => {
 export const getHHMM = (d = new Date()) =>
   new Intl.DateTimeFormat("de-DE", {
     timeZone: "Pacific/Auckland",
-    timeStyle: "medium",
+    timeStyle: "short",
   }).format(d);
+
+/** true if the dates are the same, in the user's timezone */
+export const isSameDay = (date1: Date, date2: Date) =>
+  date1.toLocaleDateString() === date2.toLocaleDateString();

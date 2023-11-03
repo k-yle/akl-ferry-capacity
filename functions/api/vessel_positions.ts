@@ -84,12 +84,13 @@ export const onRequest: Handler = async (context) => {
       const result: VesselOnRoute = {
         vessel,
         nameFromAIS: label === vehicle.id ? null : label,
-        trip: tripId
-          ? {
-              ...tripObject[tripId],
-              confidence: VesselTripConfidence.CERTAIN,
-            }
-          : null,
+        trip:
+          tripId && tripObject[tripId]
+            ? {
+                ...tripObject[tripId],
+                confidence: VesselTripConfidence.CERTAIN,
+              }
+            : null,
         potentialNextTrip: null,
         nmea2000: {
           lat,
