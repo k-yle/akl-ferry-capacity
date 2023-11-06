@@ -3,7 +3,8 @@ import { useParams, Navigate } from "react-router-dom";
 import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";
-import type { FerryRoute, Rsn } from "../../types.def.ts";
+import type { Rsn } from "../../types.def.ts";
+import { findRoute } from "../../helpers/general.ts";
 import { TerminalTab } from "./TerminalTab.tsx";
 
 const TabPanel: React.FC<{ visible: boolean } & React.PropsWithChildren> = ({
@@ -18,14 +19,12 @@ const TabPanel: React.FC<{ visible: boolean } & React.PropsWithChildren> = ({
 };
 
 export const RoutePage: React.FC = () => {
-  const { routes, terminals } = useContext(DataContext);
+  const { routes, terminals, altRsns } = useContext(DataContext);
   const rsn = useParams<{ rsn: Rsn }>().rsn!;
 
   const [tabIndex, setTabIndex] = useState<number | undefined>(undefined);
 
-  const route = Object.values(routes || {}).find((cat) => rsn in cat)?.[
-    rsn as never
-  ] as FerryRoute | undefined;
+  const route = findRoute(routes, rsn);
 
   useEffect(() => {
     if (!route || tabIndex !== undefined) return;
@@ -44,6 +43,10 @@ export const RoutePage: React.FC = () => {
   }, [route, tabIndex]);
 
   if (!routes || !terminals) return <CircularProgress />;
+
+  if (!route && altRsns[rsn]) {
+    return <Navigate to={`/routes/${altRsns[rsn]}`} />;
+  }
 
   if (!route) return <Navigate to="/" />;
 

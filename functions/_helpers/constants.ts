@@ -71,6 +71,7 @@ export const FERRY_ROUTES = {
       name: "Waiheke",
       shortName: "Waiheke",
       stationIds: [96001, 61000],
+      altRsn: ["MTAR", "MTID"],
     },
   },
   tourist: {

@@ -67,6 +67,8 @@ export type FerryRoute = {
   name: string;
   shortName: string;
   stationIds: StationId[];
+  /** alternative RSNs used for this route */
+  altRsn?: string[];
 };
 
 export type Departure = TripObject & {

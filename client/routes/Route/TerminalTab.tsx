@@ -1,4 +1,4 @@
-import { Fragment, useContext } from "react";
+import { Fragment, useContext, useMemo } from "react";
 import {
   Alert,
   Avatar,
@@ -26,6 +26,7 @@ import {
 import { MuiLink } from "../../components/MuiLink.tsx";
 import { useCruiseShips } from "../../hooks/useCruiseShips.ts";
 import { getHHMM as hhmm } from "../../helpers/date.ts";
+import { findRoute } from "../../helpers/general.ts";
 
 /** services that departed longer than this ago will be hidden */
 const MAX_OLD_MINUTES = 60;
@@ -150,9 +151,14 @@ export const TerminalTab: React.FC<{
   stationId: StationId;
   rsn: Rsn;
 }> = ({ stationId, rsn }) => {
-  const { vessels, error } = useContext(DataContext);
+  const { routes, vessels, error } = useContext(DataContext);
   const [terminalInfo, error2] = useTerminalInfo(stationId);
   const cruiseShipWarnings = useCruiseShips();
+
+  const allRsns = useMemo(() => {
+    const route = findRoute(routes, rsn);
+    return new Set([rsn, ...(route?.altRsn || [])]);
+  }, [rsn, routes]);
 
   if (!terminalInfo || !vessels) return <CircularProgress />;
 
@@ -160,12 +166,12 @@ export const TerminalTab: React.FC<{
     return <Alert severity="error">Failed to load data</Alert>;
   }
 
-  const knownDepartures = terminalInfo.departures.filter(
-    (dep) => dep.rsn === rsn
+  const knownDepartures = terminalInfo.departures.filter((dep) =>
+    allRsns.has(dep.rsn)
   );
   const knownTripIds = new Set(knownDepartures.map((d) => d.tripId));
   const activeMissingDepartures = vessels.list.filter(
-    (v) => v.trip && v.trip?.rsn === rsn && !knownTripIds.has(v.trip.tripId)
+    (v) => v.trip && allRsns.has(v.trip.rsn) && !knownTripIds.has(v.trip.tripId)
   );
 
   const allDepartures: Departure[] = [

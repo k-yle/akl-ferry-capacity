@@ -9,6 +9,7 @@ import { appFetch } from "../api/appFetch.ts";
 import type {
   FERRY_ROUTES,
   FERRY_TERMINALS,
+  Rsn,
   VesselOnRoute,
 } from "../types.def.ts";
 import { repairError } from "../helpers/general.ts";
@@ -19,6 +20,7 @@ type StaticInfo = {
 };
 
 export type IDataContext = Partial<StaticInfo> & {
+  altRsns: Record<string, Rsn>;
   error: Error | undefined;
   vessels: { lastUpdated: number; list: VesselOnRoute[] } | undefined;
 };
@@ -56,9 +58,24 @@ export const DataProvider: React.FC<React.PropsWithChildren> = ({
     return () => clearInterval(id);
   }, [updateVesselPositions]);
 
+  /** map of all alterantive RSNs to their main RSN */
+  const altRsns = useMemo(() => {
+    return Object.fromEntries<Rsn>(
+      Object.values(staticInfo?.routes || {}).flatMap((object) =>
+        Object.entries(object).flatMap(
+          ([mainRsn, r]) =>
+            (r.altRsn as string[] | undefined)?.map((altRsn) => [
+              altRsn,
+              mainRsn as Rsn,
+            ]) || []
+        )
+      )
+    );
+  }, [staticInfo]);
+
   const context = useMemo(
-    () => ({ ...staticInfo, vessels, error }),
-    [staticInfo, vessels, error]
+    () => ({ ...staticInfo, altRsns, vessels, error }),
+    [staticInfo, altRsns, vessels, error]
   );
 
   return (
