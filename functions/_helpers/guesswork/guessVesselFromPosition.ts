@@ -82,5 +82,6 @@ export const guessVesselFromPosition = (
       },
     ],
     tripId: "",
+    routeId: "",
   };
 };

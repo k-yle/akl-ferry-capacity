@@ -1,6 +1,7 @@
 import { Fragment, useContext, useMemo } from "react";
 import {
   Alert,
+  AlertTitle,
   Avatar,
   Box,
   Chip,
@@ -25,7 +26,11 @@ import {
 } from "../../types.def.ts";
 import { MuiLink } from "../../components/MuiLink.tsx";
 import { useCruiseShips } from "../../hooks/useCruiseShips.ts";
-import { getHHMM as hhmm } from "../../helpers/date.ts";
+import {
+  getYYYYMMDD,
+  getHHMM as hhmm,
+  normaliseGtfsTime,
+} from "../../helpers/date.ts";
 import { findRoute } from "../../helpers/general.ts";
 
 /** services that departed longer than this ago will be hidden */
@@ -70,14 +75,18 @@ export const renderNameAndConfidence = (
 export const VesselRow: React.FC<{
   dep: Departure;
   liveVessel?: [VesselOnRoute, VesselTripConfidence];
-}> = ({ dep, liveVessel: [liveVessel, confidence] = [] }) => {
+  isCancelled: boolean;
+}> = ({ dep, liveVessel: [liveVessel, confidence] = [], isCancelled }) => {
+  const time = new Date(`1970-01-01T${normaliseGtfsTime(dep.time)}`);
+
   return (
     <ListItem
       alignItems="flex-start"
       secondaryAction={
         <>
-          {hhmm(new Date(dep.time))}
-          {new Date(dep.time) < new Date() && (
+          {hhmm(time)}
+          {time < new Date() && dep.date === "TODAY" && (
+            // FIXME: line above
             <em>
               <br />
               Departed
@@ -86,7 +95,7 @@ export const VesselRow: React.FC<{
         </>
       }
       style={{
-        background: dep.cancelled ? "#f3e0ff" : undefined,
+        background: isCancelled ? "#f3e0ff" : undefined,
         color: "inherit",
       }}
       // @ts-expect-error -- this works, MUI is stupid
@@ -126,7 +135,7 @@ export const VesselRow: React.FC<{
                 —{" "}
               </>
             )}
-            {dep.cancelled ? (
+            {isCancelled ? (
               <Chip label="Cancelled" color="error" size="small" />
             ) : liveVessel ? (
               <>
@@ -174,6 +183,10 @@ export const TerminalTab: React.FC<{
     (v) => v.trip && allRsns.has(v.trip.rsn) && !knownTripIds.has(v.trip.tripId)
   );
 
+  const alerts = vessels.alerts.filter((alert) =>
+    alert.appliesTo.some((thisRsn) => allRsns.has(thisRsn))
+  );
+
   const allDepartures: Departure[] = [
     ...activeMissingDepartures.flatMap((vessel) => {
       const trip = vessel.trip!;
@@ -204,16 +217,17 @@ export const TerminalTab: React.FC<{
 
       const departure: Departure = {
         // consturct a fake departure with all the facts we know
-        cancelled: false,
         operator: vessel.vessel.operators[0].name,
         destinationLive: stopTime.headsign,
         destination: trip.destination,
         tripId: vessel.trip!.tripId,
+        routeId: vessel.trip!.routeId,
         rsn,
         time,
         pier: +(stopTime.pier || 0),
         dates: vessel.trip!.dates,
         stopTimes: vessel.trip!.stopTimes,
+        date: getYYYYMMDD(new Date()),
       };
       return [departure];
     }),
@@ -223,12 +237,13 @@ export const TerminalTab: React.FC<{
   return (
     <div>
       <Box mb={2}>
-        {terminalInfo.alerts.map((alert) => (
+        {alerts.map((alert) => (
           <Alert
-            key={alert.text}
+            key={`${alert.title} ${alert.description}`}
             severity={alert.priority === "high" ? "warning" : "info"}
           >
-            {alert.text}
+            <AlertTitle>{alert.title}</AlertTitle>
+            {alert.description}
           </Alert>
         ))}
         {cruiseShipWarnings.map((alert) => (
@@ -247,9 +262,20 @@ export const TerminalTab: React.FC<{
               (v) => v.potentialNextTrip?.tripId === departure.tripId
             );
 
+            const differentDayToPrevious =
+              !!index && departure.date !== allDepartures[index - 1]?.date;
             return (
               <Fragment key={departure.tripId}>
                 {!!index && <Divider variant="inset" component="li" />}
+                {differentDayToPrevious && (
+                  <>
+                    {new Date(departure.date).toLocaleDateString(
+                      navigator.languages,
+                      { weekday: "long" }
+                    )}
+                    :
+                  </>
+                )}
                 <VesselRow
                   dep={departure}
                   liveVessel={
@@ -262,12 +288,13 @@ export const TerminalTab: React.FC<{
                         ]
                       : undefined
                   }
+                  isCancelled={vessels.cancellations.includes(departure.tripId)}
                 />
               </Fragment>
             );
           })
         ) : (
-          <Alert severity="warning">No departures in the next two hours</Alert>
+          <Alert severity="warning">No departures in the next two days</Alert>
         )}
       </List>
       <Typography variant="body2">

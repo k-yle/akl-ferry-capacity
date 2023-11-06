@@ -15,7 +15,10 @@ import {
 } from "gtfs-types";
 import { Extract } from "unzip-stream";
 import { config as dotenv } from "dotenv";
-import type { Rsn, TripObjectFile } from "../functions/_helpers/types.def.js";
+import type {
+  Rsn,
+  StaticTimetableDB,
+} from "../functions/_helpers/types.def.js";
 import { csvToJsonObject } from "./util/csvToJsonObject.js";
 import { getDatesForTrip } from "./util/date.ts";
 
@@ -104,18 +107,29 @@ export async function fetchTimetables() {
   // 4. Merge GTFS tables into an object keyed by the trip_id
   //
   console.log("Merging tables...");
-  const tripObject: TripObjectFile = {};
+  const staticTimetableDB: StaticTimetableDB = {
+    stopIds: {},
+    trips: {},
+  };
   for (const tripId in trips) {
     const trip = trips[tripId][0];
     const route = routes[trip.route_id][0];
     const agency = agencies[route.agency_id!]?.[0]?.agency_name || "Unknown";
 
     if (+route.route_type === VehicleType.FERRY) {
+      const rsn = <Rsn>route.route_short_name;
+
       const finalStopTimes = stopTimes[tripId]
         .sort((a, b) => +a.stop_sequence - +b.stop_sequence)
         .map((stopTime) => {
           const stop = stops[stopTime.stop_id][0];
           const station = stops[stop.parent_station!][0];
+
+          staticTimetableDB.stopIds[stop.stop_id] ||= [];
+          if (staticTimetableDB.stopIds[stop.stop_id].includes(rsn)) {
+            staticTimetableDB.stopIds[stop.stop_id].push(rsn);
+          }
+
           return {
             stop: station.stop_code!,
             pier: stop.platform_code,
@@ -129,9 +143,10 @@ export async function fetchTimetables() {
         calendarDates[trip.service_id]
       );
 
-      tripObject[tripId] = {
+      staticTimetableDB.trips[tripId] = {
         tripId,
-        rsn: route.route_short_name as Rsn,
+        rsn,
+        routeId: route.route_id,
         operator: agency,
         destination: trip.trip_headsign || "Unknown",
         dates,
@@ -146,7 +161,7 @@ export async function fetchTimetables() {
   console.log("Saving result to disk...");
   await fs.writeFile(
     join(TEMP_FOLDER, "tripObj.json"),
-    JSON.stringify(tripObject, null, 2)
+    JSON.stringify(staticTimetableDB, null, 2)
   );
 
   //
@@ -160,7 +175,7 @@ export async function fetchTimetables() {
 
     const response = await fetch(`${API_URL}/api/admin/update_timetables`, {
       method: "POST",
-      body: JSON.stringify(tripObject),
+      body: JSON.stringify(staticTimetableDB),
       headers: { Authentication: token },
     }).then((r) => r.json());
 

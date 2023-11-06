@@ -36,3 +36,10 @@ export const getInNMinutes = (hhmmss: string, minuteOffset: number) => {
   date.setUTCMinutes(date.getUTCMinutes() + minuteOffset);
   return date.toISOString().split("T")[1].split(".")[0];
 };
+
+/** adds a certain number of days to the provided date */
+export const addDay = (date: Date, daysToAdd: number) => {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + daysToAdd);
+  return newDate;
+};

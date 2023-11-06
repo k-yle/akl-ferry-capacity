@@ -38,6 +38,7 @@ export type VesselInfo = {
 export type TripObject = {
   tripId: string;
   rsn: Rsn;
+  routeId: string;
   operator: string;
   destination: string;
   /** ISO Dates */
@@ -50,6 +51,12 @@ export type TripObject = {
   }[];
 };
 export type TripObjectFile = { [tripId: string]: TripObject };
+
+export type StaticTimetableDB = {
+  trips: TripObjectFile;
+  /** map of stopIds and the routes that stop there */
+  stopIds: { [stationId: string]: Rsn[] };
+};
 
 export type FerryTerminal = [
   name: string,
@@ -75,56 +82,15 @@ export type Departure = TripObject & {
   destinationLive: string;
   time: string;
   pier: number | undefined;
-  cancelled: boolean;
+  date: string;
 };
 export type TerminalLiveInfo = {
   lastUpdated: number;
-  alerts: AT.Cancellation[];
   departures: Departure[];
 };
 
-export namespace AT {
-  export type Movement = {
-    scheduledArrivalTime: null;
-    scheduledDepartureTime: "2023-04-22T01:30:00.000Z";
-    arrivalBoardingActivity: "alighting";
-    arrivalPlatformName: string;
-    arrivalStatus: "noReport" | "cancelled";
-    departureBoardingActivity: "boarding";
-    departurePlatformName: "2";
-    destinationDisplay: string;
-    expectedArrivalTime: null;
-    expectedDepartureTime: null;
-    inCongestion: false;
-    monitored: false;
-    route_short_name: string;
-    stop_code: string;
-    /** ISO Name */
-    timestamp: string;
-    vehicleJourneyName: string;
-    route_id: string;
-    shape_id: string;
-    trip_id: string;
-  };
-
-  export type Cancellation = {
-    priority: "high";
-    text: string;
-  };
-
-  export type StationAPIResponse = {
-    status: "OK";
-    error: null;
-    response: {
-      movements: AT.Movement[];
-      extensions: AT.Cancellation[];
-    };
-  };
-}
-
 export type Handler = PagesFunction<{
   AT_MAIN_API_KEY: string;
-  AT_ALT_API_KEY: string;
   UPLOAD_TOKEN: string;
   DB: KVNamespace;
 }>;
@@ -173,8 +139,20 @@ export type VesselOnRoute = {
     navStatus: string; // 0-15 from n2k
   };
 };
+
+export type Alert = {
+  title?: string;
+  description?: string;
+  url?: string;
+  priority: "low" | "high";
+  appliesTo: Rsn[];
+};
+
 export type VesselPositionsFile = {
   list: VesselOnRoute[];
   lastUpdated: number;
   prevPositions: { [mmsi: number]: DatedCoord[] };
+  /** list of tripIds */
+  cancellations: string[];
+  alerts: Alert[];
 };

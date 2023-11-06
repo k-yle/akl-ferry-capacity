@@ -2,15 +2,16 @@ import type { GTFSRealtime } from "gtfs-types";
 import {
   VesselTripConfidence,
   type Handler,
-  type TripObjectFile,
   type VesselInfo,
   type VesselOnRoute,
   type VesselPositionsFile,
+  type StaticTimetableDB,
 } from "../_helpers/types.def.js";
 import { API_HEADERS } from "../_helpers/constants.js";
 import { deriveCog } from "../_helpers/util/geo.js";
 import { guessVesselFromPreviousTrip } from "../_helpers/guesswork/guessVesselFromPreviousTrip.js";
 import { guessVesselFromPosition } from "../_helpers/guesswork/guessVesselFromPosition.js";
+import { processServiceAlerts } from "../_helpers/timetable/processServiceAlerts.js";
 
 /** cache data in memory for max 1min */
 const CACHE_MINUTES = 1;
@@ -43,18 +44,26 @@ export const onRequest: Handler = async (context) => {
 
   const vesselInfo =
     (await context.env.DB.get<VesselInfo>("vesselInfo", "json")) || {};
-  const tripObject =
-    (await context.env.DB.get<TripObjectFile>("tripObj", "json")) || {};
+  const staticTimetableDB = await context.env.DB.get<StaticTimetableDB>(
+    "tripObj",
+    "json"
+  );
+  const tripObject = staticTimetableDB?.trips || {};
 
-  const realtime: GTFSRealtime = await fetch(
-    "https://api.at.govt.nz/realtime/legacy",
-    {
-      headers: {
-        ...API_HEADERS,
-        "Ocp-Apim-Subscription-Key": context.env.AT_MAIN_API_KEY,
-      },
-    }
-  ).then((r) => r.json());
+  const realtime = await fetch("https://api.at.govt.nz/v2/public/realtime", {
+    headers: {
+      ...API_HEADERS,
+      "Ocp-Apim-Subscription-Key": context.env.AT_MAIN_API_KEY,
+    },
+  })
+    .then((r) => r.json<GTFSRealtime>())
+    .catch(
+      (): GTFSRealtime => ({
+        // if the AT API is down, return nothing instead of erroring
+        status: "",
+        response: { header: <never>{}, entity: [] },
+      })
+    );
 
   const vesselsOnRoute = realtime.response
     .entity! // filter out busses, trains, or unknown MMSI numbers
@@ -114,6 +123,7 @@ export const onRequest: Handler = async (context) => {
     list: vesselsOnRoute,
     lastUpdated: now,
     prevPositions: previousPositions,
+    ...processServiceAlerts(realtime, staticTimetableDB),
   };
 
   await context.env.DB.put("vesselPositions", JSON.stringify(output));

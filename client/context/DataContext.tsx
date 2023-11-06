@@ -10,7 +10,7 @@ import type {
   FERRY_ROUTES,
   FERRY_TERMINALS,
   Rsn,
-  VesselOnRoute,
+  VesselPositionsFile,
 } from "../types.def.ts";
 import { repairError } from "../helpers/general.ts";
 
@@ -22,7 +22,7 @@ type StaticInfo = {
 export type IDataContext = Partial<StaticInfo> & {
   altRsns: Record<string, Rsn>;
   error: Error | undefined;
-  vessels: { lastUpdated: number; list: VesselOnRoute[] } | undefined;
+  vessels: VesselPositionsFile | undefined;
 };
 
 export const DataContext = createContext({} as IDataContext);

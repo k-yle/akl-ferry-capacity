@@ -17,6 +17,7 @@ const tripObjectFile: TripObjectFile = {
   t1: {
     // this one is too early
     tripId: "t1",
+    routeId: "r-HMB",
     rsn: "HMB",
     dates: ["2022-11-12"],
     destination: "Half Moon Bay",
@@ -29,6 +30,7 @@ const tripObjectFile: TripObjectFile = {
   t2: {
     // this one is for the wrong day
     tripId: "t2",
+    routeId: "r-HMB",
     rsn: "HMB",
     dates: ["2022-11-10"],
     destination: "Half Moon Bay",
@@ -41,6 +43,7 @@ const tripObjectFile: TripObjectFile = {
   t3: {
     // this one is plausible
     tripId: "t3",
+    routeId: "r-HMB",
     rsn: "HMB",
     dates: ["2022-11-12"],
     destination: "Half Moon Bay",
@@ -53,6 +56,7 @@ const tripObjectFile: TripObjectFile = {
   t4: {
     // this one is plausible (for a vessel standing by at Pier 1 downtown)
     tripId: "t4",
+    routeId: "r-BIRK",
     rsn: "BIRK",
     dates: ["2022-11-12"],
     destination: "Birkenhead",
@@ -65,6 +69,7 @@ const tripObjectFile: TripObjectFile = {
   t5: {
     // same as t4, but departs earlier
     tripId: "t5",
+    routeId: "r-BAYS",
     rsn: "BAYS",
     dates: ["2022-11-12"],
     destination: "Bayswater",
@@ -116,6 +121,7 @@ describe("guessVesselFromPosition", () => {
 
       confidence: VesselTripConfidence.LIKELY,
       tripId: "",
+      routeId: "",
       stopTimes: [
         {
           headsign: "Downtown",
@@ -162,6 +168,7 @@ describe("guessVesselFromPosition", () => {
 
       confidence: VesselTripConfidence.LIKELY,
       tripId: "",
+      routeId: "",
       stopTimes: [
         {
           headsign: "Downtown",
