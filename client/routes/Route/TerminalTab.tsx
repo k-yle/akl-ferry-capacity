@@ -17,11 +17,11 @@ import TimeAgo from "react-timeago-i18n";
 import { DataContext } from "../../context/DataContext.tsx";
 import { useTerminalInfo } from "../../hooks/useTerminalInfo.ts";
 import {
-  VesselTripConfidence,
   type Departure,
-  type VesselOnRoute,
-  type StationId,
   type Rsn,
+  type StationId,
+  type VesselOnRoute,
+  VesselTripConfidence,
 } from "../../types.def.ts";
 import { MuiLink } from "../../components/MuiLink.tsx";
 import { useCruiseShips } from "../../hooks/useCruiseShips.ts";
@@ -256,11 +256,11 @@ export const TerminalTab: React.FC<{
                     liveVessel
                       ? [liveVessel, liveVessel.trip!.confidence]
                       : potentialLiveVessel
-                      ? [
-                          potentialLiveVessel,
-                          potentialLiveVessel.potentialNextTrip!.confidence,
-                        ]
-                      : undefined
+                        ? [
+                            potentialLiveVessel,
+                            potentialLiveVessel.potentialNextTrip!.confidence,
+                          ]
+                        : undefined
                   }
                 />
               </Fragment>

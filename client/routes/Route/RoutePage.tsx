@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";

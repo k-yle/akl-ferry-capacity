@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 declare module "*.txt" {
   const text: string;
   export default text;

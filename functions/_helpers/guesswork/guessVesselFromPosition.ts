@@ -2,9 +2,9 @@ import whichPolygon from "which-polygon";
 import { FERRY_TERMINALS } from "../constants.js";
 import harbourZones from "../assets/harbourZones.geo.json";
 import {
-  VesselTripConfidence,
-  type VesselOnRoute,
   type TripObjectFile,
+  type VesselOnRoute,
+  VesselTripConfidence,
 } from "../types.def.js";
 import { getInNMinutes, getNow, getToday } from "../util/date.js";
 

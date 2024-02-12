@@ -1,4 +1,4 @@
-import { ExceptionType, type Calendar, type CalendarDates } from "gtfs-types";
+import { type Calendar, type CalendarDates, ExceptionType } from "gtfs-types";
 
 const DAY_NAMES = [
   "sunday",

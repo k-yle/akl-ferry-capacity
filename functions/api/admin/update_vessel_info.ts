@@ -1,5 +1,5 @@
 import query from "../../_helpers/assets/queryVesselInfo.sparql.txt";
-import { Handler, Vessel, VesselInfo } from "../../_helpers/types.def.js";
+import type { Handler, Vessel, VesselInfo } from "../../_helpers/types.def.js";
 import { API_HEADERS } from "../../_helpers/constants.js";
 
 type WikidataAPI = {

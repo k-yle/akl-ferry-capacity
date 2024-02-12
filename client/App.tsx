@@ -1,6 +1,6 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import teal from "@mui/material/colors/teal.js";
 import { HomePage } from "./routes/Home/HomePage.tsx";
 import { RoutePage } from "./routes/Route/RoutePage.tsx";

@@ -1,9 +1,9 @@
-import { expect, describe, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { guessVesselFromPreviousTrip } from "../guessVesselFromPreviousTrip.js";
 import {
-  VesselTripConfidence,
   type TripObject,
   type VesselOnRoute,
+  VesselTripConfidence,
 } from "../../types.def.js";
 
 vi.mock("../../util/date.js", async () => ({

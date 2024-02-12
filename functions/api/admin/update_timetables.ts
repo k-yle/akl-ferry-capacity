@@ -1,4 +1,4 @@
-import { Handler } from "../../_helpers/types.def.js";
+import type { Handler } from "../../_helpers/types.def.js";
 
 export const onRequest: Handler = async (context) => {
   // due to resource limitations, the logic runs outside of

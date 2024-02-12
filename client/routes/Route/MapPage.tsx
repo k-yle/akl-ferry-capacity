@@ -1,12 +1,12 @@
-import { useContext, useState, useCallback } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Map } from "leaflet";
 import {
+  LayersControl,
   MapContainer,
-  TileLayer,
   Marker,
   Popup,
-  LayersControl,
+  TileLayer,
 } from "react-leaflet";
 import { Navbar } from "../../components/Navbar.tsx";
 import { DataContext } from "../../context/DataContext.tsx";

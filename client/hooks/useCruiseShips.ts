@@ -48,8 +48,8 @@ export function useCruiseShips() {
             severity: isAtAnchor
               ? "error"
               : isInFerryBasin
-              ? "warning"
-              : "info",
+                ? "warning"
+                : "info",
             message: `A berthing cruise ship may cause cancellations around ${getHHMM(
               arrival
             )} and ${getHHMM(departure)} today.`,

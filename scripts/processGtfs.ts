@@ -5,13 +5,13 @@ import { createReadStream, promises as fs } from "node:fs";
 import { promisify } from "node:util";
 import {
   type Agency,
-  type Route,
-  type Trip,
-  VehicleType,
   type Calendar,
   type CalendarDates,
+  type Route,
   type Stop,
   type StopTime,
+  type Trip,
+  VehicleType,
 } from "gtfs-types";
 import { Extract } from "unzip-stream";
 import { config as dotenv } from "dotenv";

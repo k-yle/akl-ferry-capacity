@@ -1,11 +1,11 @@
 import type { GTFSRealtime } from "gtfs-types";
 import {
-  VesselTripConfidence,
   type Handler,
   type TripObjectFile,
   type VesselInfo,
   type VesselOnRoute,
   type VesselPositionsFile,
+  VesselTripConfidence,
 } from "../_helpers/types.def.js";
 import { API_HEADERS } from "../_helpers/constants.js";
 import { deriveCog } from "../_helpers/util/geo.js";

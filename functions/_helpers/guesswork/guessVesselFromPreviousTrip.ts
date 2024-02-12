@@ -1,8 +1,8 @@
 import { FERRY_TERMINALS } from "../constants.js";
 import {
-  StationId,
-  TripObjectFile,
-  VesselOnRoute,
+  type StationId,
+  type TripObjectFile,
+  type VesselOnRoute,
   VesselTripConfidence,
 } from "../types.def.js";
 import { getInNMinutes, getToday } from "../util/date.js";
